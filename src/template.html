@@ -8,14 +8,33 @@
 </head>
 
 <body class="light">
-    <section>
-        <div>
-            <h4>Webpack Template</h4>
-            <p>This is a Webpack Template for Bryan. Hope you enjoy!</p>
-            <button>Power Mode!</button>
+
+    <header class="app-header">
+        <div class="logo">
+            <span class="logo-icon">E</span>
+            <h5>Engineering Checklist</h5>
         </div>
-    </section>
+
+        <div class="header-actions">
+            <button id="themeToggle" class="icon-button" type="button" aria-label="Switch to dark mode"
+                title="Switch to dark mode">
+                ☾
+            </button>
+        </div>
+    </header>
+
+    <main class="app-container">
+
+        <aside id="sidebar" class="sidebar"></aside>
+
+        <section id="mainContent" class="main-content"></section>
+
+    </main>
+
+    <div id="modalContainer"></div>
+
     <script src="./index.js"></script>
+
 </body>
 
 </html>

@@ -1,6 +1,13 @@
 import "./styles.css";
 
-const button = document.querySelector("button");
-button.addEventListener("click", () => {
-    document.body.classList.toggle("light");
-})
+import { AppController } from './controllers/AppController.js';
+import { ThemeController } from './components/ThemeController.js';
+
+const app = new AppController();
+app.init();
+
+const themeController = new ThemeController(
+    document.querySelector('#themeToggle')
+);
+
+themeController.init();

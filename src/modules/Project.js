@@ -1,27 +1,28 @@
-import { Item } from '../modules/Item.js';
+import Item from '../modules/Item.js';
 
 class Project {
     list = [];
 
     static Status = Object.freeze({
-        ONGOING: 'ON-GOING',
-        REVIEWING: 'UNDER REVIEW',
-        COMPLETED: 'COMPLETED'
+        ONGOING: 'On-Going',
+        REVIEWING: 'Under Review',
+        COMPLETED: 'Completed'
     });
 
     static Stage = Object.freeze({
-        "10": 10,
-        "30": 30,
-        "60": 60,
-        "90": 90,
+        TEN: 10,
+        THIRTY: 30,
+        SIXTY: 60,
+        NINETY: 90,
         BID: 'Bid',
-        CONSTRUCTION: 'CONSTRUCTION'
+        CONSTRUCTION: 'Construction'
     })
 
     constructor(name) {
+        this.id = crypto.randomUUID();
         this.name = name;
         this.status = Project.Status.ONGOING;
-        this.stage = Project.Stage[10];
+        this.stage = Project.Stage.TEN;
         this.createdAt = Date.now();
         this.finishedAt = null;
     }
