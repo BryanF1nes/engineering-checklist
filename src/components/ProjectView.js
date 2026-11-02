@@ -5,6 +5,9 @@ export class ProjectView {
     constructor(container, appController) {
         this.container = container;
         this.appController = appController;
+
+        // Keep track of the currently selected checklist filter
+        this.activeFilter = 'ALL';
     }
 
     render(project) {
@@ -18,11 +21,29 @@ export class ProjectView {
             item => item.status === 'COMPLETED'
         ).length;
 
+        const pending = project.list.length - completed;
         const total = project.list.length;
 
         const progress = total
             ? Math.round((completed / total) * 100)
             : 0;
+
+        const stage = typeof project.stage === 'number'
+            ? `${project.stage}%`
+            : project.stage;
+
+        // Determine which items should be displayed
+        const filteredItems = project.list.filter(item => {
+            if (this.activeFilter === 'PENDING') {
+                return item.status === 'PENDING';
+            }
+
+            if (this.activeFilter === 'COMPLETED') {
+                return item.status === 'COMPLETED';
+            }
+
+            return true;
+        });
 
         this.container.innerHTML = `
 
@@ -31,7 +52,7 @@ export class ProjectView {
                 <div>
                     <p class="section-label">PROJECT OVERVIEW</p>
 
-                    <h3>${project.name}</h3>
+                    <h3>${this.escapeHTML(project.name)}</h3>
 
                     <p class="project-description">
                         Created ${new Date(project.createdAt).toLocaleDateString()}
@@ -39,9 +60,61 @@ export class ProjectView {
                 </div>
 
                 <div class="project-actions">
+
+                    <button
+                        id="editProject"
+                        class="icon-button"
+                        type="button"
+                        aria-label="Edit project"
+                        title="Edit project"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/>
+                        </svg>
+                    </button>
+
+                    <button
+                        id="deleteProject"
+                        class="icon-button danger"
+                        type="button"
+                        aria-label="Delete project"
+                        title="Delete project"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M3 6h18"/>
+                            <path d="M8 6V4h8v2"/>
+                            <path d="m19 6-1 14H6L5 6"/>
+                            <path d="M10 11v5"/>
+                            <path d="M14 11v5"/>
+                        </svg>
+                    </button>
+
+
                     <button id="addItem">
                         + Add Task
                     </button>
+
                 </div>
 
             </div>
@@ -50,12 +123,12 @@ export class ProjectView {
 
                 <div class="detail-card">
                     <span class="detail-label">STATUS</span>
-                    <h6>${project.status}</h6>
+                    <h6>${this.escapeHTML(project.status)}</h6>
                 </div>
 
                 <div class="detail-card">
                     <span class="detail-label">PROJECT STAGE</span>
-                    <h6>${project.stage}%</h6>
+                    <h6>${this.escapeHTML(stage)}</h6>
                 </div>
 
                 <div class="detail-card">
@@ -88,11 +161,54 @@ export class ProjectView {
                     <span>${total} Tasks</span>
                 </div>
 
+                <div class="checklist-filters">
+
+                    <button
+                        type="button"
+                        class="filter-button ${this.activeFilter === 'ALL' ? 'active' : ''}"
+                        data-filter="ALL"
+                    >
+                        All
+                        <span>${total}</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filter-button ${this.activeFilter === 'PENDING' ? 'active' : ''}"
+                        data-filter="PENDING"
+                    >
+                        Pending
+                        <span>${pending}</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filter-button ${this.activeFilter === 'COMPLETED' ? 'active' : ''}"
+                        data-filter="COMPLETED"
+                    >
+                        Completed
+                        <span>${completed}</span>
+                    </button>
+
+                </div>
+
                 <div class="checklist">
 
-                    ${project.list.map(item =>
-            ItemView.render(item)
-        ).join('')}
+                    ${filteredItems.length
+                ? filteredItems.map(item =>
+                    ItemView.render(item)
+                ).join('')
+                : `
+                                <div class="filter-empty-state">
+                                    <p>
+                                        ${total === 0
+                    ? 'No tasks have been added yet.'
+                    : `No ${this.activeFilter.toLowerCase()} tasks.`
+                }
+                                    </p>
+                                </div>
+                            `
+            }
 
                 </div>
 
@@ -125,18 +241,55 @@ export class ProjectView {
                 this.appController.createItem();
             });
 
+        this.container.querySelector('#editProject')
+            .addEventListener('click', () => {
+                this.appController.editProject();
+            });
+
+        this.container.querySelector('#deleteProject')
+            .addEventListener('click', () => {
+                this.appController.deleteProject(project.id);
+            });
+
+        // Checklist filter buttons
+        this.container.querySelectorAll('.filter-button')
+            .forEach(button => {
+                button.addEventListener('click', () => {
+                    this.activeFilter = button.dataset.filter;
+                    this.render(project);
+                });
+            });
+
+        // Checklist item actions
         this.container.querySelectorAll('.checklist-item')
             .forEach(element => {
 
+                const id = element.dataset.id;
+
                 element.querySelector('.item-checkbox')
                     .addEventListener('click', () => {
+                        this.appController.toggleItem(id);
+                    });
 
-                        this.appController.toggleItem(
-                            element.dataset.id
-                        );
+                element.querySelector('.item-edit')
+                    .addEventListener('click', () => {
+                        this.appController.editItem(id);
+                    });
 
+                element.querySelector('.item-delete')
+                    .addEventListener('click', () => {
+                        this.appController.deleteItem(id);
                     });
 
             });
+    }
+
+    escapeHTML(value) {
+        return String(value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
     }
 }

@@ -388,6 +388,101 @@ button {
     opacity: 1;
 }
 
+/* ========================================
+   Controls
+======================================== */
+
+.project-actions,
+.item-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.project-actions button,
+.item-actions button {
+    font: inherit;
+    cursor: pointer;
+}
+
+/* Icon buttons */
+
+.icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+    padding: 0;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    background: transparent;
+    color: var(--text-muted);
+
+    transition:
+        background 150ms ease,
+        color 150ms ease,
+        border-color 150ms ease;
+}
+
+.icon-button svg {
+    width: 17px;
+    height: 17px;
+    stroke-width: 1.8;
+}
+
+/* Edit icon */
+
+.icon-button:not(.danger):hover {
+    background: var(--primary-muted);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+/* Delete icon */
+
+.icon-button.danger:hover {
+    background: oklch(60% 0.18 25 / 10%);
+    color: oklch(60% 0.18 25);
+    border-color: oklch(60% 0.18 25);
+}
+
+/* Regular buttons */
+
+.secondary-button,
+.danger-button {
+    padding: 0.6rem 0.9rem;
+    border-radius: 8px;
+}
+
+.secondary-button {
+    background: transparent;
+    border: 1px solid currentColor;
+    color: inherit;
+}
+
+.danger-button {
+    background: transparent;
+    border: 1px solid oklch(60% 0.18 25);
+    color: oklch(60% 0.18 25);
+}
+
+.secondary-button:hover {
+    background: var(--primary-muted);
+}
+
+.danger-button:hover {
+    background: oklch(60% 0.18 25 / 10%);
+}
+
+/* Checklist actions */
+
+.item-actions {
+    margin-left: auto;
+}
 
 /* ========================================
    Project Cards
@@ -620,6 +715,81 @@ button {
 
 .item-status {
     font-size: 0.7rem;
+}
+
+
+/* ========================================
+   Checklist Filters
+======================================== */
+.checklist-filters {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.filter-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    padding: 0.45rem 0.85rem;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    background: transparent;
+    color: inherit;
+
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease;
+}
+
+.filter-button:hover {
+    background: var(--primary-muted);
+}
+
+.filter-button.active {
+    background: var(--primary-muted);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.filter-button span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.35rem;
+
+    border-radius: 999px;
+
+    background: oklch(from currentColor l c h / 12%);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.filter-empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 100px;
+    padding: 1.5rem;
+
+    color: var(--text-muted, gray);
+    text-align: center;
+}
+
+.filter-empty-state p {
+    margin: 0;
+    font-size: 0.9rem;
 }
 
 /* ========================================
