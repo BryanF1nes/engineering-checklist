@@ -665,6 +665,9 @@ button {
 .checklist {
     display: flex;
     flex-direction: column;
+    max-height: clamp(300px, calc(100vh - 750px), 600px);
+    overflow-y: auto;
+    padding-right: 0.5rem;
 }
 
 .checklist-item {
