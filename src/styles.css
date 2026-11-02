@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100..900;1,100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Unkempt:wght@400;700&display=swap');
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--ff);
+}
+
+/* Variables */
+:root {
+    /** Colors **/
+    --bg-dark: oklch(0.1 0.04 255);
+    --bg: oklch(0.15 0.04 255);
+    --bg-light: oklch(0.2 0.04 255);
+    --text: oklch(0.96 0.08 255);
+    --text-muted: oklch(0.76 0.08 255);
+    --highlight: oklch(0.5 0.08 255);
+    --border: oklch(0.4 0.08 255);
+    --border-muted: oklch(0.3 0.08 255);
+    --primary: oklch(0.76 0.1 255);
+    --secondary: oklch(0.76 0.1 75);
+
+    /** Warnings **/
+    --danger: oklch(0.7 0.08 30);
+    --warning: oklch(0.7 0.08 100);
+    --success: oklch(0.7 0.08 160);
+    --info: oklch(0.7 0.08 260);
+
+    /** Fonts **/
+    --ff: "Inter", sans-serif;
+    --h1: 700 5.61rem/1.6em var(--ff);
+    --h2: 600 4.209rem/1.6em var(--ff);
+    --h3: 600 3.157rem/1.6em var(--ff);
+    --h4: 600 2.369rem/1.6em var(--ff);
+    --h5: 500 1.777rem/1.6em var(--ff);
+    --h6: 500 1.333rem/1.6em var(--ff);
+    --p: 500 1rem/1.6em var(--ff);
+    --small: 500 0.75rem/1.6em var(--ff);
+    --extra-small: 500 0.563rem/1.6em var(--ff);
+
+    /** Spacing **/
+    --spacing1: 4px;
+    --spacing2: 8px;
+    --spacing3: 16px;
+    --spacing4: 20px;
+    --spacing5: 40px;
+    --spacing6: 80px;
+    --spacing7: 160px;
+
+    /** Shadows & Gradients **/
+    --gradient: linear-gradient(0deg, var(--bg) 95%, var(--bg-light));
+    --gradient-hover: linear-gradient(0deg, var(--bg), var(--bg-light));
+    --border-card: solid 1px var(--border);
+    --shadow: 0px 2px 2px hsla(0, 0%, 0%, 0.07), 0px 4px 4px hsla(0, 0%, 0%, 0.15);
+    --transition: 0.3s ease-in-out;
+}
+
+/** Font Resets **/
+h1 {
+    font: var(--h1);
+}
+
+h2 {
+    font: var(--h2);
+}
+
+h3 {
+    font: var(--h3);
+}
+
+h4 {
+    font: var(--h4);
+}
+
+h5 {
+    font: var(--h5);
+}
+
+h6 {
+    font: var(--h6);
+}
+
+p {
+    font: var(--p);
+}
+
+/** Light Mode **/
+body.light {
+    --bg-dark: oklch(0.92 0.04 255);
+    --bg: oklch(0.96 0.04 255);
+    --bg-light: oklch(1 0.04 255);
+    --text: oklch(0.15 0.08 255);
+    --text-muted: oklch(0.4 0.08 255);
+    --highlight: oklch(1 0.08 255);
+    --border: oklch(0.6 0.08 255);
+    --border-muted: oklch(0.7 0.08 255);
+    --primary: oklch(0.4 0.1 255);
+    --secondary: oklch(0.4 0.1 75);
+    --danger: oklch(0.5 0.08 30);
+    --warning: oklch(0.5 0.08 100);
+    --success: oklch(0.5 0.08 160);
+    --info: oklch(0.5 0.08 260);
+
+    --gradient: linear-gradient(0deg, var(--bg) 95%, var(--bg-light));
+    --gradient-hover: linear-gradient(0deg, var(--bg), var(--bg-light));
+    --border-card: solid 1px var(--bg);
+}
+
+
+
+/** Start CSS **/
+body {
+    background: var(--bg-dark);
+    color: var(--text-muted);
+}
+
+button {
+    background: var(--bg-light);
+    padding: 0.5rem 1rem 0.7rem 1rem;
+    color: var(--text);
+    font-weight: 700;
+    border-radius: 0.5rem;
+    border: var(--border-card);
+    margin-top: 1.5rem;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+button:hover {
+    transform: translateY(-3px);
+    transition: var(--transition);
+}
+
+div {
+    background: var(--gradient);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: var(--border-card);
+    border-top: solid 1px var(--highlight);
+    box-shadow: var(--shadow);
+}
+
+div:hover {
+    background: var(--gradient-hover);
+}
+
+section {
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+}
+
+h4 {
+    color: var(--text);
+}
