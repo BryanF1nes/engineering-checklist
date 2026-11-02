@@ -5,9 +5,11 @@
   "scripts": {
     "dev": "npx webpack serve",
     "build": "npx webpack",
-    "pretty": "npx prettier . --write",
     "test": "jest",
-    "watch": "jest --watch"
+    "watch": "jest --watch",
+    "build": "webpack --config webpack.config.js",
+    "pretty": "npx prettier . --write",
+    "deploy": "npm run build && gh-pages -d dist"
   },
   "keywords": [],
   "author": "",
