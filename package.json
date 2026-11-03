@@ -6,7 +6,7 @@
     "dev": "npx webpack serve",
     "test": "jest",
     "watch": "jest --watch",
-    "build": "webpack --config webpack.config.js",
+    "build": "webpack --webpack.config.js",
     "pretty": "prettier . --write",
     "deploy": "npm run build && gh-pages -d dist"
   },
