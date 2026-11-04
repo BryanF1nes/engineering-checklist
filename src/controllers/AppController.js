@@ -6,6 +6,7 @@ import { AuthView } from '../components/AuthView.js';
 import * as projectService from '../services/projectService.js';
 import * as itemService from '../services/itemService.js';
 import * as authService from '../services/authService.js';
+import * as invitationService from '../services/invitationService.js';
 
 export class AppController {
 
@@ -13,6 +14,9 @@ export class AppController {
         this.user = null;
         this.projects = [];
         this.activeProject = null;
+
+        this.pendingInvitationToken = new URLSearchParams(window.location.search)
+            .get('invite');
 
         this.authContainer = document.querySelector('#authContainer');
         this.appContainer = document.querySelector('#appContainer');
@@ -42,9 +46,9 @@ export class AppController {
             const response = await authService.getCurrentUser();
 
             this.user = response.user;
-
             this.showApplication();
 
+            await this.acceptPendingInvitation();
             await this.loadProjects();
 
         } catch (error) {
@@ -76,9 +80,9 @@ export class AppController {
             const response = await authService.login(email, password);
 
             this.user = response.user;
-
             this.showApplication();
 
+            await this.acceptPendingInvitation();
             await this.loadProjects();
 
         } catch (error) {
@@ -256,6 +260,57 @@ export class AppController {
         }
     }
 
+    async shareProject(projectId) {
+        const project = this.projects.find(
+            project => project.id === Number(projectId)
+        );
+
+        if (!project) return;
+
+        this.modal.openInvitation(async ({ role }) => {
+            try {
+                const response = await invitationService.createInvitation(
+                    project.id,
+                    role
+                );
+
+                const invitation = response.invitation;
+                const invitationUrl = new URL(window.location.href);
+                invitationUrl.searchParams.set('invite', invitation.token);
+
+                this.modal.showInvitation({
+                    ...invitation,
+                    url: invitationUrl.toString(),
+                });
+
+            } catch (error) {
+                console.error('Failed to create invitation:', error);
+                alert(error.message || 'Unable to create invitation.');
+            }
+        }, project);
+    }
+
+    async acceptPendingInvitation() {
+        if (!this.pendingInvitationToken) return;
+
+        try {
+            await invitationService.acceptInvitation(
+                this.pendingInvitationToken
+            );
+
+            this.pendingInvitationToken = null;
+
+            const url = new URL(window.location.href);
+            url.searchParams.delete('invite');
+
+            window.history.replaceState({}, '', url);
+
+            alert('Invitation accepted! The shared project is now available.');
+        } catch (error) {
+            console.error('Failed to accept invitation:', error);
+            alert(error.message || 'Unable to accept this invitation.');
+        }
+    }
 
     async selectProject(id) {
         try {

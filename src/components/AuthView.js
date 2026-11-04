@@ -1,4 +1,3 @@
-
 export class AuthView {
     constructor(container, appController) {
         this.container = container;

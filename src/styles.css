@@ -1333,3 +1333,40 @@ button {
         min-height: auto;
     }
 }
+
+.invitation-code {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing2);
+    padding: var(--spacing2) 0;
+    border-radius: 10px;
+}
+
+.invitation-code code {
+    flex: 1;
+    min-width: 0;
+    display: block;
+
+    padding: var(--spacing3);
+
+    background: var(--bg-dark);
+    border: var(--border-card);
+    border-radius: 7px;
+
+    color: var(--text);
+    font: var(--small);
+
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.invitation-code button {
+    flex-shrink: 0;
+}
+
+.invitation-expiration {
+    margin-top: var(--spacing2);
+    color: var(--text-muted);
+    font: var(--small);
+}

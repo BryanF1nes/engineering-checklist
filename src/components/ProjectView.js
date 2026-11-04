@@ -76,7 +76,6 @@ export class ProjectView {
                 </div>
 
                 <div class="project-actions">
-
                     <button
                         id="editProject"
                         class="icon-button"
@@ -97,6 +96,32 @@ export class ProjectView {
                         >
                             <path d="M12 20h9"/>
                             <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/>
+                        </svg>
+                    </button>
+
+                    <button
+                        id="shareProject"
+                        class="icon-button"
+                        type="button"
+                        aria-label="Share project"
+                        title="Share project"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <circle cx="18" cy="5" r="3"/>
+                            <circle cx="6" cy="12" r="3"/>
+                            <circle cx="18" cy="19" r="3"/>
+                            <path d="m8.7 10.7 6.6-3.4"/>
+                            <path d="m8.7 13.3 6.6 3.4"/>
                         </svg>
                     </button>
 
@@ -260,6 +285,11 @@ export class ProjectView {
         this.container.querySelector('#editProject')
             .addEventListener('click', () => {
                 this.appController.editProject();
+            });
+
+        this.container.querySelector('#shareProject')
+            .addEventListener('click', () => {
+                this.appController.shareProject(project.id);
             });
 
         this.container.querySelector('#deleteProject')
