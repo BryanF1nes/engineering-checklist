@@ -1,6 +1,7 @@
 import { Sidebar } from '../components/Sidebar.js';
 import { ProjectView } from '../components/ProjectView.js';
 import { ModalController } from '../components/ModalController.js';
+import { AuthView } from '../components/AuthView.js';
 
 import * as projectService from '../services/projectService.js';
 import * as itemService from '../services/itemService.js';
@@ -13,8 +14,11 @@ export class AppController {
         this.projects = [];
         this.activeProject = null;
 
+        this.authContainer = document.querySelector('#authContainer');
+        this.appContainer = document.querySelector('#appContainer');
+
         this.modal = new ModalController(
-            document.querySelector('#modalController')
+            document.querySelector('#modalContainer')
         );
 
         this.sidebar = new Sidebar(
@@ -26,24 +30,90 @@ export class AppController {
             document.querySelector('#mainContent'),
             this
         );
+
+        this.authView = new AuthView(
+            this.authContainer,
+            this
+        );
     }
 
     async init() {
         try {
-            this.user = await authService.getCurrentUser();
+            const response = await authService.getCurrentUser();
+
+            this.user = response.user;
+
+            this.showApplication();
 
             await this.loadProjects();
 
         } catch (error) {
-            console.error('Failed to initialize application:', error);
-
             if (error.status === 401) {
-                // We'll implement the login screen next.
-                console.log('User is not authenticated.');
+                this.showAuthentication();
                 return;
             }
 
+            console.error('Failed to initialize application:', error);
+
             alert('Unable to load the application. Please try again.');
+        }
+    }
+
+    showAuthentication() {
+        this.appContainer.hidden = true;
+        this.authContainer.hidden = false;
+
+        this.authView.renderLogin();
+    }
+
+    showApplication() {
+        this.authContainer.hidden = true;
+        this.appContainer.hidden = false;
+    }
+
+    async login(email, password) {
+        try {
+            const response = await authService.login(email, password);
+
+            this.user = response.user;
+
+            this.showApplication();
+
+            await this.loadProjects();
+
+        } catch (error) {
+            console.error('Login failed:', error);
+            alert(error.message || 'Unable to sign in.');
+        }
+    }
+
+    async register(username, email, password) {
+        try {
+            await authService.register(username, email, password);
+
+            // Registration does not automatically create a session,
+            // so log the user in after successfully registering.
+            await this.login(email, password);
+
+        } catch (error) {
+            console.error('Registration failed:', error);
+            alert(error.message || 'Unable to create your account.');
+        }
+    }
+
+    async logout() {
+        try {
+            await authService.logout();
+
+            this.user = null;
+            this.projects = [];
+            this.activeProject = null;
+
+            this.showAuthentication();
+
+        } catch (error) {
+            console.error('Logout failed:', error);
+            alert('Unable to sign out. Please try again.');
         }
     }
 
@@ -70,7 +140,8 @@ export class AppController {
     render() {
         this.sidebar.render(
             this.projects,
-            this.activeProject
+            this.activeProject,
+            this.user
         );
 
         this.projectView.render(this.activeProject);

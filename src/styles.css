@@ -1091,3 +1091,196 @@ button {
         border-color var(--transition),
         color var(--transition);
 }
+
+/* ========================================
+   Authentication
+======================================== */
+
+[hidden] {
+    display: none !important;
+}
+
+.auth-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 2rem 1rem;
+
+    background: var(--bg-dark);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+
+    padding: 2.5rem;
+
+    background: var(--bg);
+    border: var(--border-card);
+    border-top: 3px solid var(--primary);
+    border-radius: 1rem;
+
+    box-shadow: var(--shadow);
+
+    animation: slideUp 0.25s ease;
+}
+
+.auth-card h2 {
+    color: var(--text);
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.auth-card>p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+}
+
+.auth-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.auth-card .primary-button {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.85rem;
+}
+
+.auth-switch {
+    margin-top: 1.5rem;
+    margin-bottom: 0 !important;
+
+    text-align: center;
+    font-size: 0.85rem !important;
+}
+
+.auth-switch button {
+    padding: 0;
+    margin-left: 0.25rem;
+
+    background: transparent;
+    color: var(--primary);
+
+    font-size: inherit;
+    font-weight: 700;
+}
+
+.auth-switch button:hover {
+    transform: none;
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+/* ========================================
+   Sidebar Account
+======================================== */
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.project-list {
+    flex: 1;
+}
+
+.sidebar-account {
+    margin-top: auto;
+    padding-top: 1.5rem;
+
+    border-top: 1px solid var(--border-muted);
+}
+
+.account-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    min-width: 0;
+    margin-bottom: 1rem;
+}
+
+.account-avatar {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+
+    width: 40px;
+    height: 40px;
+
+    background: var(--primary-muted);
+    color: var(--primary);
+
+    border-radius: 50%;
+
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.account-details {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+}
+
+.account-username {
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.account-email {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.75rem;
+
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+
+    background: transparent;
+    color: var(--text-muted);
+
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+
+    font-size: 0.85rem;
+}
+
+.logout-button:hover {
+    background: var(--primary-muted);
+    color: var(--primary);
+
+    transform: none;
+    opacity: 1;
+}
+
+@media (max-width: 600px) {
+    .auth-card {
+        padding: 1.75rem;
+    }
+
+    .sidebar {
+        min-height: auto;
+    }
+}

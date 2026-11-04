@@ -17,12 +17,14 @@ export class ProjectView {
             return;
         }
 
-        const completed = project.list.filter(
+        const items = project.items || [];
+
+        const completed = items.filter(
             item => item.status === 'COMPLETED'
         ).length;
 
-        const pending = project.list.length - completed;
-        const total = project.list.length;
+        const pending = items.length - completed;
+        const total = items.length;
 
         const progress = total
             ? Math.round((completed / total) * 100)
@@ -47,7 +49,7 @@ export class ProjectView {
 
 
         // Determine which items should be displayed
-        const filteredItems = project.list.filter(item => {
+        const filteredItems = items.filter(item => {
             if (this.activeFilter === 'PENDING') {
                 return item.status === 'PENDING';
             }

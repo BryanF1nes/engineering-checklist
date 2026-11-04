@@ -7,7 +7,7 @@ export class Sidebar {
         this.appController = appController;
     }
 
-    render(projects, activeProject) {
+    render(projects, activeProject, user) {
 
         this.container.innerHTML = `
             <div class="sidebar-header">
@@ -25,6 +25,28 @@ export class Sidebar {
                 ${projects.map(project =>
             ProjectCard.render(project, activeProject)
         ).join('')}
+            </div>
+            <div class="sidebar-account">
+                <div class="account-profile">
+                    <div class="account-avatar">
+                        ${user.username.charAt(0)}
+                    </div>
+
+                    <div class="account-details">
+                        <span class="account-username">
+                            ${user.username}
+                        </span>
+
+                        <span class="account-email">
+                            ${user.email}
+                        </span>
+                    </div>
+                </div>
+
+                <button id="logoutButton" class="logout-button" type="button">
+                    <span>↪</span>
+                    Sign Out
+                </button>
             </div>
         `;
 
@@ -44,6 +66,11 @@ export class Sidebar {
                     this.appController.selectProject(Number(card.dataset.id));
                 });
 
+            });
+
+        this.container.querySelector('#logoutButton')
+            .addEventListener('click', () => {
+                this.appController.logout();
             });
     }
 }
