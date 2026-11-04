@@ -48,7 +48,25 @@ export class Sidebar {
                     Sign Out
                 </button>
             </div>
+            <div
+                class="sidebar-resizer"
+                role="separator"
+                aria-orientation="vertical"
+                aria-label="Resize sidebar"
+                tabindex="0"
+            ></div>
         `;
+
+        this.storageKey = `sidebar-width-${user.id ?? user.username}`;
+
+        const savedWidth = localStorage.getItem(this.storageKey);
+
+        if (savedWidth) {
+            this.container.parentElement.style.setProperty(
+                '--sidebar-width',
+                `${savedWidth}px`
+            );
+        }
 
         this.bindEvents();
     }
@@ -72,5 +90,55 @@ export class Sidebar {
             .addEventListener('click', () => {
                 this.appController.logout();
             });
+
+        this.bindResizer();
+    }
+
+    bindResizer() {
+        const resizer = this.container.querySelector('.sidebar-resizer');
+        const appContainer = this.container.parentElement;
+
+        let isResizing = false;
+
+        resizer.addEventListener('pointerdown', event => {
+            isResizing = true;
+
+            resizer.setPointerCapture(event.pointerId);
+
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+        });
+
+        resizer.addEventListener('pointermove', event => {
+            if (!isResizing) return;
+
+            const bounds = appContainer.getBoundingClientRect();
+
+            const minWidth = 200;
+            const maxWidth = 450;
+
+            const width = Math.min(
+                maxWidth,
+                Math.max(minWidth, event.clientX - bounds.left)
+            );
+
+            appContainer.style.setProperty('--sidebar-width', `${width}px`);
+        });
+
+        const stopResizing = () => {
+            if (!isResizing) return;
+
+            isResizing = false;
+
+            const width = appContainer.style.getPropertyValue('--sidebar-width');
+
+            localStorage.setItem(this.storageKey, parseInt(width, 10));
+
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        };
+
+        resizer.addEventListener('pointerup', stopResizing);
+        resizer.addEventListener('pointercancel', stopResizing);
     }
 }

@@ -149,7 +149,7 @@ export class AppController {
 
     // PROJECT OPERATIONS
     async createProject() {
-        this.modal.openProject(async ({ name, status, stage }) => {
+        this.modal.openProject(async ({ name, status, code, stage }) => {
             name = name.trim();
 
             if (!name) return;
@@ -158,6 +158,7 @@ export class AppController {
                 const response = await projectService.createProject({
                     name,
                     status,
+                    code,
                     stage,
                 });
 
@@ -179,7 +180,7 @@ export class AppController {
     async editProject() {
         if (!this.activeProject) return;
 
-        this.modal.openProject(async ({ name, status, stage }) => {
+        this.modal.openProject(async ({ name, status, code, stage }) => {
             name = name.trim();
 
             if (!name) return;
@@ -190,6 +191,7 @@ export class AppController {
                     {
                         name,
                         status,
+                        code,
                         stage,
                     }
                 );

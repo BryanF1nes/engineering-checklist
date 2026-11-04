@@ -305,15 +305,48 @@ button {
 /* ========================================
    Application Layout
 ======================================== */
-
 .app-container {
     display: grid;
-    grid-template-columns: 280px minmax(0, 1fr);
+    grid-template-columns: var(--sidebar-width, 320px) 1fr;
 
     flex: 1;
     align-items: stretch;
 
     min-height: 0;
+    min-width: 0;
+}
+
+.sidebar-resizer {
+    position: absolute;
+    top: 0;
+    right: -3px;
+
+    width: 6px;
+    height: 100%;
+
+    cursor: col-resize;
+    z-index: 10;
+}
+
+.sidebar-resizer:hover {
+    background: var(--accent-color);
+}
+
+
+.sidebar-resizer {
+    position: absolute;
+    top: 0;
+    right: -3px;
+
+    width: 6px;
+    height: 100%;
+
+    cursor: col-resize;
+    z-index: 10;
+}
+
+.sidebar-resizer:hover {
+    background: var(--accent-color);
 }
 
 /* ========================================
@@ -321,12 +354,28 @@ button {
 ======================================== */
 
 .sidebar {
+    position: relative;
+    min-width: 0;
     background: var(--bg);
     border-right: var(--border-card);
-
     padding: 1.5rem;
+}
 
-    min-width: 0;
+.sidebar-resizer {
+    position: absolute;
+    top: 0;
+    right: -3px;
+
+    width: 6px;
+    height: 100%;
+
+    cursor: col-resize;
+    touch-action: none;
+    z-index: 10;
+}
+
+.sidebar-resizer:hover {
+    background: var(--accent-color);
 }
 
 .sidebar-header,

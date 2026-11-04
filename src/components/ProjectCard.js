@@ -1,4 +1,3 @@
-
 export class ProjectCard {
 
     static render(project, activeProject) {
@@ -11,6 +10,7 @@ export class ProjectCard {
         };
 
         const status = statusLabels[project.status] || project.status;
+        const code = project.projectCode || '';
 
         const name = String(project.name)
             .replaceAll('&', '&amp;')
@@ -29,11 +29,11 @@ export class ProjectCard {
                         ${name}
                     </p>
                     <span class="project-status">
-                        ${status}
+                        ${code ? `<span>${code}</span><br>` : ''}
+                        <span>Status: ${status}</span>
                     </span>
                 </div>
             </div>
         `;
     }
 }
-

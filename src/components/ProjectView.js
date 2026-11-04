@@ -50,8 +50,8 @@ export class ProjectView {
 
         // Determine which items should be displayed
         const filteredItems = items.filter(item => {
-            if (this.activeFilter === 'PENDING') {
-                return item.status === 'PENDING';
+            if (this.activeFilter === 'ONGOING') {
+                return item.status === 'ONGOING';
             }
 
             if (this.activeFilter === 'COMPLETED') {
@@ -190,10 +190,10 @@ export class ProjectView {
 
                     <button
                         type="button"
-                        class="filter-button ${this.activeFilter === 'PENDING' ? 'active' : ''}"
-                        data-filter="PENDING"
+                        class="filter-button ${this.activeFilter === 'ONGOING' ? 'active' : ''}"
+                        data-filter="ONGOING"
                     >
-                        Pending
+                        On going
                         <span>${pending}</span>
                     </button>
 

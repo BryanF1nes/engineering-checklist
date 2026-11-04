@@ -64,6 +64,20 @@ export class ModalController {
                 </div>
 
                 <div class="form-group">
+                    <label for="projectCode">Project Code</label>
+
+                    <input
+                        type="text"
+                        id="projectCode"
+                        name="code"
+                        value="${this.escapeHTML(project?.code || '')}"
+                        placeholder="Enter project code..."
+                        maxlength="10"
+                        autofocus
+                    >
+                </div>
+
+                <div class="form-group">
                     <label for="projectStatus">Project Status</label>
 
                     <select id="projectStatus" name="status">
