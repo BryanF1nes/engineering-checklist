@@ -2,6 +2,7 @@ import { Sidebar } from '../components/Sidebar.js';
 import { ProjectView } from '../components/ProjectView.js';
 import { ModalController } from '../components/ModalController.js';
 import { AuthView } from '../components/AuthView.js';
+import { io } from 'socket.io-client';
 
 import * as projectService from '../services/projectService.js';
 import * as itemService from '../services/itemService.js';
@@ -14,6 +15,7 @@ export class AppController {
         this.user = null;
         this.projects = [];
         this.activeProject = null;
+        this.socket = null;
 
         this.pendingInvitationToken = new URLSearchParams(window.location.search)
             .get('invite');
@@ -46,6 +48,7 @@ export class AppController {
             const response = await authService.getCurrentUser();
 
             this.user = response.user;
+            this.connectSocket();
             this.showApplication();
 
             await this.acceptPendingInvitation();
@@ -80,6 +83,7 @@ export class AppController {
             const response = await authService.login(email, password);
 
             this.user = response.user;
+            this.connectSocket();
             this.showApplication();
 
             await this.acceptPendingInvitation();
@@ -139,6 +143,8 @@ export class AppController {
         const response = await projectService.getProject(projectId);
 
         this.activeProject = response.project;
+
+        this.joinProjectRoom(this.activeProject.id);
     }
 
     render() {
@@ -437,5 +443,42 @@ export class AppController {
             console.error('Failed to update checklist item status:', error);
             alert(error.message);
         }
+    }
+
+    connectSocket() {
+        if (this.socket) return;
+
+        this.socket = io('http://localhost:3000', {
+            withCredentials: true,
+        });
+
+        this.socket.on('connect', () => {
+            console.log('Connected to Socket.IO:', this.socket.id);
+
+            if (this.activeProject) {
+                this.joinProjectRoom(this.activeProject.id);
+            }
+        });
+
+        this.socket.on('connect_error', error => {
+            console.error('Socket connection failed:', error.message);
+        });
+
+        this.socket.on('disconnect', reason => {
+            console.log('Disconnected from Socket.IO:', reason);
+        });
+    }
+
+    joinProjectRoom(projectId) {
+        if (!this.socket || !projectId) return;
+
+        this.socket.emit('project:join', projectId, response => {
+            if (!response.success) {
+                console.error('Failed to join project room:', response.message);
+                return;
+            }
+
+            console.log(`Joined project room: ${response.projectId}`);
+        });
     }
 }
