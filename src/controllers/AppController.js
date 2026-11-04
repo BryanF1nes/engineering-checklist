@@ -113,6 +113,11 @@ export class AppController {
         try {
             await authService.logout();
 
+            if (this.socket) {
+                this.socket.disconnect();
+                this.socket = null;
+            }
+
             this.user = null;
             this.projects = [];
             this.activeProject = null;
@@ -467,6 +472,19 @@ export class AppController {
         this.socket.on('disconnect', reason => {
             console.log('Disconnected from Socket.IO:', reason);
         });
+
+        // Checklist item events
+        this.socket.on('item:created', () => {
+            this.refreshActiveProject();
+        });
+
+        this.socket.on('item:updated', () => {
+            this.refreshActiveProject();
+        });
+
+        this.socket.on('item:deleted', () => {
+            this.refreshActiveProject();
+        });
     }
 
     joinProjectRoom(projectId) {
@@ -480,5 +498,16 @@ export class AppController {
 
             console.log(`Joined project room: ${response.projectId}`);
         });
+    }
+
+    async refreshActiveProject() {
+        if (!this.activeProject) return;
+
+        try {
+            await this.loadProjectDetails(this.activeProject.id);
+            this.render();
+        } catch (error) {
+            console.error('Failed to refresh project:', error);
+        }
     }
 }
