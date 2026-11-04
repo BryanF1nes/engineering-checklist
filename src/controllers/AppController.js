@@ -278,7 +278,7 @@ export class AppController {
             try {
                 await itemService.createProjectItem(
                     this.activeProject.id,
-                    { name }
+                    { title: name }
                 );
 
                 await this.loadProjectDetails(this.activeProject.id);
@@ -356,8 +356,6 @@ export class AppController {
     }
 
     async toggleItem(id) {
-        if (!this.activeProject) return;
-
         const item = this.activeProject.items.find(
             item => item.id === Number(id)
         );
@@ -365,7 +363,7 @@ export class AppController {
         if (!item) return;
 
         const newStatus = item.status === 'COMPLETED'
-            ? 'PENDING'
+            ? 'ONGOING'
             : 'COMPLETED';
 
         try {
@@ -376,12 +374,11 @@ export class AppController {
             );
 
             await this.loadProjectDetails(this.activeProject.id);
-
             this.render();
 
         } catch (error) {
             console.error('Failed to update checklist item status:', error);
-            alert(error.message || 'Unable to update checklist item.');
+            alert(error.message);
         }
     }
 }

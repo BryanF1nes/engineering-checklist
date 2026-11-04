@@ -5,11 +5,11 @@ export class ItemView {
         const completed = item.status === 'COMPLETED';
         const status = item.status === 'COMPLETED'
             ? 'Completed'
-            : 'Pending';
+            : 'On going';
 
         const createdAt = new Date(item.createdAt).toLocaleDateString();
 
-        const name = String(item.name)
+        const title = String(item.title)
             .replaceAll('&', '&amp;')
             .replaceAll('<', '&lt;')
             .replaceAll('>', '&gt;')
@@ -34,7 +34,7 @@ export class ItemView {
                 <div class="item-content">
 
                     <p class="item-name">
-                        ${name}
+                        ${title}
                     </p>
 
                     <span class="item-date">
