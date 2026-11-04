@@ -32,7 +32,6 @@ export class Sidebar {
     }
 
     bindEvents() {
-
         this.container.querySelector('#addProject')
             .addEventListener('click', () => {
                 this.appController.createProject();
@@ -42,7 +41,7 @@ export class Sidebar {
             .forEach(card => {
 
                 card.addEventListener('click', () => {
-                    this.appController.selectProject(card.dataset.id);
+                    this.appController.selectProject(Number(card.dataset.id));
                 });
 
             });

@@ -1,21 +1,20 @@
-import Project from '../modules/Project.js';
-
 import { Sidebar } from '../components/Sidebar.js';
 import { ProjectView } from '../components/ProjectView.js';
 import { ModalController } from '../components/ModalController.js';
 
-import { StorageController } from './StorageController.js';
+import * as projectService from '../services/projectService.js';
+import * as itemService from '../services/itemService.js';
+import * as authService from '../services/authService.js';
 
 export class AppController {
 
     constructor() {
+        this.user = null;
         this.projects = [];
         this.activeProject = null;
 
-        this.storage = new StorageController();
-
         this.modal = new ModalController(
-            document.querySelector('#modalContainer')
+            document.querySelector('#modalController')
         );
 
         this.sidebar = new Sidebar(
@@ -29,18 +28,43 @@ export class AppController {
         );
     }
 
-    init() {
-        this.projects = this.storage.loadProjects();
+    async init() {
+        try {
+            this.user = await authService.getCurrentUser();
 
-        const activeProjectId = this.storage.loadActiveProjectId();
+            await this.loadProjects();
 
-        this.activeProject = this.projects.find(
-            project => project.id === activeProjectId
-        ) || this.projects[0] || null;
+        } catch (error) {
+            console.error('Failed to initialize application:', error);
 
-        this.storage.saveActiveProject(this.activeProject?.id);
+            if (error.status === 401) {
+                // We'll implement the login screen next.
+                console.log('User is not authenticated.');
+                return;
+            }
 
-        this.render();
+            alert('Unable to load the application. Please try again.');
+        }
+    }
+
+    async loadProjects() {
+        const response = await projectService.getProjects();
+
+        this.projects = response.projects;
+
+        if (this.projects.length === 0) {
+            this.activeProject = null;
+            this.render();
+            return;
+        }
+
+        await this.selectProject(this.projects[0].id);
+    }
+
+    async loadProjectDetails(projectId) {
+        const response = await projectService.getProject(projectId);
+
+        this.activeProject = response.project;
     }
 
     render() {
@@ -52,60 +76,79 @@ export class AppController {
         this.projectView.render(this.activeProject);
     }
 
-    save() {
-        const projectsSaved = this.storage.saveProjects(
-            this.projects
-        );
-
-        const activeProjectSaved = this.storage.saveActiveProject(
-            this.activeProject?.id
-        );
-
-        return projectsSaved && activeProjectSaved;
-    }
-
     // PROJECT OPERATIONS
-
-    createProject() {
-        this.modal.openProject(({ name, status, stage }) => {
+    async createProject() {
+        this.modal.openProject(async ({ name, status, stage }) => {
             name = name.trim();
 
             if (!name) return;
 
-            const project = new Project(name);
+            try {
+                const response = await projectService.createProject({
+                    name,
+                    status,
+                    stage,
+                });
 
-            project.updateStatus(status);
-            project.updateStage(this.normalizeStage(stage));
+                // Add the newly created project to the sidebar.
+                this.projects.push(response.project);
 
-            this.projects.push(project);
-            this.activeProject = project;
+                // Load its full details.
+                await this.loadProjectDetails(response.project.id);
 
-            this.save();
-            this.render();
+                this.render();
+
+            } catch (error) {
+                console.error('Failed to create project:', error);
+                alert(error.message || 'Unable to create project.');
+            }
         });
     }
 
-    editProject() {
+    async editProject() {
         if (!this.activeProject) return;
 
-        this.modal.openProject(({ name, status, stage }) => {
+        this.modal.openProject(async ({ name, status, stage }) => {
             name = name.trim();
 
             if (!name) return;
 
-            this.activeProject.renameProject(name);
-            this.activeProject.updateStatus(status);
-            this.activeProject.updateStage(this.normalizeStage(stage));
+            try {
+                await projectService.updateProject(
+                    this.activeProject.id,
+                    {
+                        name,
+                        status,
+                        stage,
+                    }
+                );
 
-            this.save();
-            this.render();
+                await this.loadProjectDetails(this.activeProject.id);
 
+                // Update the sidebar's project information.
+                const index = this.projects.findIndex(
+                    project => project.id === this.activeProject.id
+                );
+
+                if (index !== -1) {
+                    this.projects[index] = {
+                        ...this.projects[index],
+                        ...this.activeProject,
+                    };
+                }
+
+                this.render();
+
+            } catch (error) {
+                console.error('Failed to update project:', error);
+                alert(error.message || 'Unable to update project.');
+            }
         }, this.activeProject);
     }
 
-    deleteProject(id) {
+    async deleteProject(id) {
         const project = this.projects.find(
-            project => project.id === id
+            project => project.id === Number(id)
         );
 
         if (!project) return;
@@ -116,71 +159,105 @@ export class AppController {
 
         if (!confirmed) return;
 
-        this.projects = this.projects.filter(
-            project => project.id !== id
-        );
+        try {
+            await projectService.deleteProject(project.id);
 
-        if (this.activeProject?.id === id) {
-            this.activeProject = this.projects[0] || null;
+            this.projects = this.projects.filter(
+                existingProject => existingProject.id !== project.id
+            );
+
+            if (this.activeProject?.id === project.id) {
+                this.activeProject = null;
+
+                if (this.projects.length > 0) {
+                    await this.selectProject(this.projects[0].id);
+                    return;
+                }
+            }
+
+            this.render();
+
+        } catch (error) {
+            console.error('Failed to delete project:', error);
+            alert(error.message || 'Unable to delete project.');
         }
-
-        this.save();
-        this.render();
     }
 
-    selectProject(id) {
-        this.activeProject = this.projects.find(
-            project => project.id === id
-        ) || null;
 
-        this.save();
-        this.render();
+    async selectProject(id) {
+        try {
+            await this.loadProjectDetails(id);
+            this.render();
+
+        } catch (error) {
+            console.error('Failed to load project:', error);
+            alert('Unable to load the selected project.');
+        }
     }
 
     // CHECKLIST ITEM OPERATIONS
-
-    createItem() {
+    async createItem() {
         if (!this.activeProject) return;
 
-        this.modal.openItem(({ name }) => {
+        this.modal.openItem(async ({ name }) => {
             name = name.trim();
 
             if (!name) return;
 
-            this.activeProject.createItem(name);
+            try {
+                await itemService.createProjectItem(
+                    this.activeProject.id,
+                    { name }
+                );
 
-            this.save();
-            this.render();
+                await this.loadProjectDetails(this.activeProject.id);
+
+                this.render();
+
+            } catch (error) {
+                console.error('Failed to create checklist item:', error);
+                alert(error.message || 'Unable to create checklist item.');
+            }
         });
     }
 
-    editItem(id) {
+    async editItem(id) {
         if (!this.activeProject) return;
 
-        const item = this.activeProject.list.find(
-            item => item.id === id
+        const item = this.activeProject.items.find(
+            item => item.id === Number(id)
         );
 
         if (!item) return;
 
-        this.modal.openItem(({ name }) => {
+        this.modal.openItem(async ({ name }) => {
             name = name.trim();
 
             if (!name) return;
 
-            item.updateName(name);
+            try {
+                await itemService.updateProjectItem(
+                    this.activeProject.id,
+                    item.id,
+                    { name }
+                );
 
-            this.save();
-            this.render();
+                await this.loadProjectDetails(this.activeProject.id);
 
+                this.render();
+
+            } catch (error) {
+                console.error('Failed to update checklist item:', error);
+                alert(error.message || 'Unable to update checklist item.');
+            }
         }, item);
     }
 
-    deleteItem(id) {
+    async deleteItem(id) {
         if (!this.activeProject) return;
 
-        const item = this.activeProject.list.find(
-            item => item.id === id
+        const item = this.activeProject.items.find(
+            item => item.id === Number(id)
         );
 
         if (!item) return;
@@ -191,32 +268,49 @@ export class AppController {
 
         if (!confirmed) return;
 
-        this.activeProject.deleteItem(id);
+        try {
+            await itemService.deleteProjectItem(
+                this.activeProject.id,
+                item.id
+            );
 
-        this.save();
-        this.render();
+            await this.loadProjectDetails(this.activeProject.id);
+
+            this.render();
+
+        } catch (error) {
+            console.error('Failed to delete checklist item:', error);
+            alert(error.message || 'Unable to delete checklist item.');
+        }
     }
 
-    toggleItem(id) {
+    async toggleItem(id) {
         if (!this.activeProject) return;
 
-        const item = this.activeProject.list.find(
-            item => item.id === id
+        const item = this.activeProject.items.find(
+            item => item.id === Number(id)
         );
 
         if (!item) return;
 
-        item.updateStatus();
+        const newStatus = item.status === 'COMPLETED'
+            ? 'PENDING'
+            : 'COMPLETED';
 
-        this.save();
-        this.render();
-    }
+        try {
+            await itemService.updateProjectItem(
+                this.activeProject.id,
+                item.id,
+                { status: newStatus }
+            );
 
-    // HELPERS
+            await this.loadProjectDetails(this.activeProject.id);
 
-    normalizeStage(stage) {
-        return typeof stage === 'string' && !isNaN(stage)
-            ? Number(stage)
-            : stage;
+            this.render();
+
+        } catch (error) {
+            console.error('Failed to update checklist item status:', error);
+            alert(error.message || 'Unable to update checklist item.');
+        }
     }
 }

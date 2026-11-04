@@ -28,9 +28,23 @@ export class ProjectView {
             ? Math.round((completed / total) * 100)
             : 0;
 
-        const stage = typeof project.stage === 'number'
-            ? `${project.stage}%`
-            : project.stage;
+        const stageLabels = {
+            TEN: '10%',
+            THIRTY: '30%',
+            SIXTY: '60%',
+            NINETY: '90%',
+            BID: 'Bid',
+            CONSTRUCTION: 'Construction',
+        };
+
+        const statusLabels = {
+            ONGOING: 'On-Going',
+            COMPLETED: 'Completed',
+        };
+
+        const stage = stageLabels[project.stage] || project.stage;
+        const status = statusLabels[project.status] || project.status;
+
 
         // Determine which items should be displayed
         const filteredItems = project.list.filter(item => {
@@ -123,7 +137,7 @@ export class ProjectView {
 
                 <div class="detail-card">
                     <span class="detail-label">STATUS</span>
-                    <h6>${this.escapeHTML(project.status)}</h6>
+                    <h6>${this.escapeHTML(status)}</h6>
                 </div>
 
                 <div class="detail-card">

@@ -3,6 +3,11 @@ export class ItemView {
     static render(item) {
 
         const completed = item.status === 'COMPLETED';
+        const status = item.status === 'COMPLETED'
+            ? 'Completed'
+            : 'Pending';
+
+        const createdAt = new Date(item.createdAt).toLocaleDateString();
 
         const name = String(item.name)
             .replaceAll('&', '&amp;')
@@ -33,13 +38,13 @@ export class ItemView {
                     </p>
 
                     <span class="item-date">
-                        Created ${new Date(item.createdAt).toLocaleDateString()}
+                        Created ${createdAt}
                     </span>
 
                 </div>
 
                 <div class="item-status">
-                    ${item.status}
+                    ${status}
                 </div>
 
                 <div class="item-actions">
@@ -68,7 +73,6 @@ export class ItemView {
                     </button>
 
                     <button
-                        id="deleteProject"
                         class="icon-button danger item-delete"
                         type="button"
                         aria-label="Delete task"

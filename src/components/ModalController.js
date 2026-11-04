@@ -1,5 +1,3 @@
-import Project from '../modules/Project.js';
-
 export class ModalController {
 
     constructor(container) {
@@ -8,25 +6,35 @@ export class ModalController {
     }
 
     openProject(onSubmit, project = null) {
+        const statuses = [
+            { value: 'ONGOING', label: 'On-Going' },
+            { value: 'COMPLETED', label: 'Completed' },
+        ];
 
-        const statuses = Object.values(Project.Status);
-        const stages = Object.values(Project.Stage);
+        const stages = [
+            { value: 'TEN', label: '10%' },
+            { value: 'THIRTY', label: '30%' },
+            { value: 'SIXTY', label: '60%' },
+            { value: 'NINETY', label: '90%' },
+            { value: 'BID', label: 'Bid' },
+            { value: 'CONSTRUCTION', label: 'Construction' },
+        ];
 
         const statusOptions = statuses.map(status => `
             <option
-                value="${status}"
-                ${project?.status === status ? 'selected' : ''}
+                value="${status.value}"
+                ${project?.status === status.value ? 'selected' : ''}
             >
-                ${status}
+                ${status.label}
             </option>
         `).join('');
 
         const stageOptions = stages.map(stage => `
             <option
-                value="${stage}"
-                ${String(project?.stage) === String(stage) ? 'selected' : ''}
+                value="${stage.value}"
+                ${project?.stage === stage.value ? 'selected' : ''}
             >
-                ${typeof stage === 'number' ? `${stage}%` : stage}
+                ${stage.label}
             </option>
         `).join('');
 
