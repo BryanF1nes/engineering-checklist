@@ -2,6 +2,7 @@ import { Sidebar } from '../components/Sidebar.js';
 import { ProjectView } from '../components/ProjectView.js';
 import { ModalController } from '../components/ModalController.js';
 import { AuthView } from '../components/AuthView.js';
+import { Notification } from '../components/Notification.js';
 import { io } from 'socket.io-client';
 
 import * as projectService from '../services/projectService.js';
@@ -22,6 +23,10 @@ export class AppController {
 
         this.authContainer = document.querySelector('#authContainer');
         this.appContainer = document.querySelector('#appContainer');
+
+        this.notification = new Notification(
+            document.querySelector('#notification-container')
+        );
 
         this.modal = new ModalController(
             document.querySelector('#modalContainer')
@@ -86,12 +91,19 @@ export class AppController {
             this.connectSocket();
             this.showApplication();
 
+            this.notification.success(
+                `Welcome back, ${this.user.username}!`
+            )
+
             await this.acceptPendingInvitation();
             await this.loadProjects();
 
         } catch (error) {
             console.error('Login failed:', error);
-            alert(error.message || 'Unable to sign in.');
+
+            this.notification.error(
+                error.message || 'Unable to sign in.'
+            );
         }
     }
 
@@ -123,6 +135,8 @@ export class AppController {
             this.activeProject = null;
 
             this.showAuthentication();
+
+            this.notification.success('You have successfully signed out.');
 
         } catch (error) {
             console.error('Logout failed:', error);
@@ -233,6 +247,8 @@ export class AppController {
                 }
 
                 this.render();
+
+                this.notification.info('Project successfully updated');
 
             } catch (error) {
                 console.error('Failed to update project:', error);
@@ -360,9 +376,12 @@ export class AppController {
 
                 this.render();
 
+                this.notification.success('Task created successfully.')
+
             } catch (error) {
                 console.error('Failed to create checklist item:', error);
-                alert(error.message || 'Unable to create checklist item.');
+
+                this.notification.error(error.message || 'Unable to create checklist item.')
             }
         });
     }
