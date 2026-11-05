@@ -361,7 +361,7 @@ export class AppController {
     async createItem() {
         if (!this.activeProject) return;
 
-        this.modal.openItem(async ({ name }) => {
+        this.modal.openItem(async ({ name, dueDate, estimatedDuration }) => {
             name = name.trim();
 
             if (!name) return;
@@ -369,7 +369,11 @@ export class AppController {
             try {
                 await itemService.createProjectItem(
                     this.activeProject.id,
-                    { title: name }
+                    {
+                        title: name,
+                        dueDate: dueDate || null,
+                        estimatedDuration: estimatedDuration ? Number(estimatedDuration) : null,
+                    }
                 );
 
                 await this.loadProjectDetails(this.activeProject.id);
@@ -395,7 +399,7 @@ export class AppController {
 
         if (!item) return;
 
-        this.modal.openItem(async ({ name }) => {
+        this.modal.openItem(async ({ name, dueDate, estimatedDuration }) => {
             name = name.trim();
 
             if (!name) return;
@@ -404,7 +408,11 @@ export class AppController {
                 await itemService.updateProjectItem(
                     this.activeProject.id,
                     item.id,
-                    { name }
+                    {
+                        title: name,
+                        dueDate: dueDate || null,
+                        estimatedDuration: estimatedDuration ? Number(estimatedDuration) : null,
+                    }
                 );
 
                 await this.loadProjectDetails(this.activeProject.id);

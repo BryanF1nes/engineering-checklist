@@ -103,6 +103,8 @@ export class ModalController {
 
         const isEditing = Boolean(item);
 
+        const dueDate = item?.dueDate ? new Date(item.dueDate).toISOString().split('T')[0] : '';
+
         this.open({
             title: isEditing
                 ? 'Edit Checklist Item'
@@ -120,11 +122,35 @@ export class ModalController {
                         type="text"
                         id="itemName"
                         name="name"
-                        value="${this.escapeHTML(item?.name || '')}"
+                        value="${this.escapeHTML(item?.title || '')}"
                         placeholder="Enter task name..."
                         required
                         maxlength="150"
                         autofocus
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="itemDueDate">Expected Completion</label>
+
+                    <input
+                        type="date"
+                        id="itemDueDate"
+                        name="dueDate"
+                        value="${dueDate}"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="itemEstimatedDuration">Estimated Duration (minutes)</label>
+
+                    <input
+                        type="number"
+                        id="itemEstimatedDuration"
+                        name="estimatedDuration"
+                        value="${item?.estimatedDuration ?? ''}"
+                        placeholder="e.g. 30"
+                        min="1"
                     >
                 </div>
             `,

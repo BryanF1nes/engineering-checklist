@@ -1,3 +1,5 @@
+import { formatDuration } from '../utils/formatDuration.js';
+
 export class ItemView {
 
     static render(item) {
@@ -8,7 +10,11 @@ export class ItemView {
             ? `${completedByName.charAt(0).toUpperCase() + completedByName.slice(1)} marked as completed`
             : 'On going';
 
-        const createdAt = new Date(item.createdAt).toLocaleDateString();
+        const [year, month, day] = item.dueDate.split('T')[0].split('-');
+
+        const dueDate = new Date(year, month - 1, day).toLocaleDateString();
+
+        const duration = formatDuration(item.estimatedDuration);
 
         const title = String(item.title)
             .replaceAll('&', '&amp;')
@@ -38,9 +44,16 @@ export class ItemView {
                         ${title}
                     </p>
 
-                    <span class="item-date">
-                        Created ${createdAt}
-                    </span>
+                    <div class="item-time">
+                        <p class="item-duration">
+                            Estimated duration: ${duration}
+                        </p>
+
+                        <span class="item-date">
+                            Expected completion: ${dueDate}
+                        </span>
+                    </div>
+
 
                 </div>
 

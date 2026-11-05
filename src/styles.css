@@ -724,7 +724,14 @@ button {
     font-size: 0.9rem;
 }
 
-.item-date {
+.item-time {
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--spacing1);
+}
+
+.item-date,
+.item-duration {
     font-size: 0.7rem;
 }
 
@@ -937,6 +944,15 @@ button {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+}
+
+.form-group input[type="date"] {
+    cursor: pointer;
+    color-scheme: dark;
+}
+
+body.light .form-group input[type="date"] {
+    color-scheme: light;
 }
 
 .form-group label {
