@@ -47,6 +47,16 @@ export class ProjectView {
         const stage = stageLabels[project.stage] || project.stage;
         const status = statusLabels[project.status] || project.status;
 
+        const members = [
+            {
+                user: project.owner,
+                role: 'OWNER',
+            },
+            ...(project.members || []).filter(
+                member => member.user.id !== project.owner.id
+            ),
+        ];
+
 
         // Determine which items should be displayed
         const filteredItems = items.filter(item => {
@@ -75,86 +85,106 @@ export class ProjectView {
                     </p>
                 </div>
 
-                <div class="project-actions">
-                    <button
-                        id="editProject"
-                        class="icon-button"
-                        type="button"
-                        aria-label="Edit project"
-                        title="Edit project"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="18"
-                            height="18"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
+                <div class="project-actions-container">
+                    <div class="project-members">
+                        ${members.map(member => `
+                            <div
+                                class="member-avatar"
+                                style="background-color: ${this.getAvatarColor(member.user.id)}"
+                                title="${this.escapeHTML(member.user.name)} (${member.role})"
+                            >
+                                ${this.escapeHTML(member.user.name.charAt(0).toUpperCase())}
+                            </div>
+                        `).join('')}
+                        ${members.length > 4 ? `
+                            <div class="member-avatar member-overflow">
+                                +${members.length - 4}
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="project-actions">
+                        <button
+                            id="editProject"
+                            class="icon-button"
+                            type="button"
+                            aria-label="Edit project"
+                            title="Edit project"
                         >
-                            <path d="M12 20h9"/>
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/>
-                        </svg>
-                    </button>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M12 20h9"/>
+                                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/>
+                            </svg>
+                        </button>
 
-                    <button
-                        id="shareProject"
-                        class="icon-button"
-                        type="button"
-                        aria-label="Share project"
-                        title="Share project"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="18"
-                            height="18"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
+                        <button
+                            id="shareProject"
+                            class="icon-button"
+                            type="button"
+                            aria-label="Share project"
+                            title="Share project"
                         >
-                            <circle cx="18" cy="5" r="3"/>
-                            <circle cx="6" cy="12" r="3"/>
-                            <circle cx="18" cy="19" r="3"/>
-                            <path d="m8.7 10.7 6.6-3.4"/>
-                            <path d="m8.7 13.3 6.6 3.4"/>
-                        </svg>
-                    </button>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <circle cx="18" cy="5" r="3"/>
+                                <circle cx="6" cy="12" r="3"/>
+                                <circle cx="18" cy="19" r="3"/>
+                                <path d="m8.7 10.7 6.6-3.4"/>
+                                <path d="m8.7 13.3 6.6 3.4"/>
+                            </svg>
+                        </button>
 
-                    <button
-                        id="deleteProject"
-                        class="icon-button danger"
-                        type="button"
-                        aria-label="Delete project"
-                        title="Delete project"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="18"
-                            height="18"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
+                        <button
+                            id="deleteProject"
+                            class="icon-button danger"
+                            type="button"
+                            aria-label="Delete project"
+                            title="Delete project"
                         >
-                            <path d="M3 6h18"/>
-                            <path d="M8 6V4h8v2"/>
-                            <path d="m19 6-1 14H6L5 6"/>
-                            <path d="M10 11v5"/>
-                            <path d="M14 11v5"/>
-                        </svg>
-                    </button>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M3 6h18"/>
+                                <path d="M8 6V4h8v2"/>
+                                <path d="m19 6-1 14H6L5 6"/>
+                                <path d="M10 11v5"/>
+                                <path d="M14 11v5"/>
+                            </svg>
+                        </button>
 
 
-                    <button id="addItem">
-                        + Add Task
-                    </button>
+                        <button id="addItem">
+                            + Add Task
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -273,6 +303,20 @@ export class ProjectView {
 
             </div>
         `;
+    }
+
+    getAvatarColor(userId) {
+        const colors = [
+            '#647ACB',
+            '#3D9970',
+            '#D17B46',
+            '#A16DB5',
+            '#C45D75',
+            '#368F9B',
+            '#B18B3D',
+        ];
+
+        return colors[userId % colors.length];
     }
 
     bindEvents(project) {
