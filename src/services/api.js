@@ -1,5 +1,7 @@
-
-const API_BASE_URL = 'http://localhost:3000';
+export const API_BASE_URL =
+    window.location.hostname === 'localhost'
+        ? 'http://localhost:3000'
+        : 'https://engineering-checklist-api.onrender.com';
 
 export class ApiError extends Error {
     constructor(message, status) {

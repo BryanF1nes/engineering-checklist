@@ -3,6 +3,7 @@ import { ProjectView } from '../components/ProjectView.js';
 import { ModalController } from '../components/ModalController.js';
 import { AuthView } from '../components/AuthView.js';
 import { Notification } from '../components/Notification.js';
+import { API_BASE_URL } from '../services/api.js';
 import { io } from 'socket.io-client';
 
 import * as projectService from '../services/projectService.js';
@@ -487,7 +488,7 @@ export class AppController {
     connectSocket() {
         if (this.socket) return;
 
-        this.socket = io('http://localhost:3000', {
+        this.socket = io(API_BASE_URL, {
             withCredentials: true,
         });
 
