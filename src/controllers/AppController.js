@@ -148,6 +148,13 @@ export class AppController {
         const response = await projectService.getProject(projectId);
 
         this.activeProject = response.project;
+        this.projects = this.projects.map(project =>
+            project.id === this.activeProject.id
+                ? { ...project, ...this.activeProject }
+                : project
+        );
+
+        this.sidebar.render(this.projects, this.activeProject, this.user)
 
         this.joinProjectRoom(this.activeProject.id);
     }
@@ -483,6 +490,15 @@ export class AppController {
         });
 
         this.socket.on('item:deleted', () => {
+            this.refreshActiveProject();
+        });
+
+        // Project events
+        this.socket.on('project:updated', () => {
+            this.refreshActiveProject();
+        });
+
+        this.socket.on('project:deleted', () => {
             this.refreshActiveProject();
         });
     }

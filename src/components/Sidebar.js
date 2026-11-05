@@ -8,6 +8,8 @@ export class Sidebar {
     }
 
     render(projects, activeProject, user) {
+        const formattedUsername = user.username.charAt(0).toUpperCase() + user.username.slice(1);
+        const avatar = user.username.charAt(0).toUpperCase();
 
         this.container.innerHTML = `
             <div class="sidebar-header">
@@ -29,12 +31,12 @@ export class Sidebar {
             <div class="sidebar-account">
                 <div class="account-profile">
                     <div class="account-avatar">
-                        ${user.username.charAt(0)}
+                        ${avatar}
                     </div>
 
                     <div class="account-details">
                         <span class="account-username">
-                            ${user.username}
+                            ${formattedUsername}
                         </span>
 
                         <span class="account-email">

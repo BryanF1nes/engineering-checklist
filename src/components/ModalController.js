@@ -70,7 +70,7 @@ export class ModalController {
                         type="text"
                         id="projectCode"
                         name="code"
-                        value="${this.escapeHTML(project?.code || '')}"
+                        value="${this.escapeHTML(project?.projectCode || '')}"
                         placeholder="Enter project code..."
                         maxlength="10"
                         autofocus
