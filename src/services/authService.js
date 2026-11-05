@@ -1,10 +1,10 @@
 import { apiRequest } from './api.js';
 
-export async function register(username, email, password) {
+export async function register(name, email, password) {
     return apiRequest('/auth/register', {
         method: 'POST',
         body: {
-            username,
+            name,
             email,
             password,
         },

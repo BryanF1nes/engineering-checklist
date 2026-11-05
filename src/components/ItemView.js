@@ -1,11 +1,11 @@
 export class ItemView {
 
     static render(item) {
-        const completedByUsername = item.completedBy?.username;
+        const completedByName = item.completedBy?.name;
 
         const completed = item.status === 'COMPLETED';
         const status = item.status === 'COMPLETED'
-            ? `${completedByUsername.charAt(0).toUpperCase() + completedByUsername.slice(1)} marked as completed`
+            ? `${completedByName.charAt(0).toUpperCase() + completedByName.slice(1)} marked as completed`
             : 'On going';
 
         const createdAt = new Date(item.createdAt).toLocaleDateString();

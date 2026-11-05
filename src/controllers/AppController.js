@@ -92,7 +92,7 @@ export class AppController {
             this.showApplication();
 
             this.notification.success(
-                `Welcome back, ${this.user.username}!`
+                `Welcome back, ${this.user.name}!`
             )
 
             await this.acceptPendingInvitation();
@@ -107,9 +107,9 @@ export class AppController {
         }
     }
 
-    async register(username, email, password) {
+    async register(name, email, password) {
         try {
-            await authService.register(username, email, password);
+            await authService.register(name, email, password);
 
             // Registration does not automatically create a session,
             // so log the user in after successfully registering.

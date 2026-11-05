@@ -56,11 +56,11 @@ export class AuthView {
 
                 <form id="registerForm">
                     <div class="form-group">
-                        <label for="registerUsername">Username</label>
+                        <label for="registerName">Name</label>
                         <input
                             type="text"
-                            id="registerUsername"
-                            name="username"
+                            id="registerName"
+                            name="name"
                             required
                         >
                     </div>
@@ -130,7 +130,7 @@ export class AuthView {
                 const formData = new FormData(event.currentTarget);
 
                 this.appController.register(
-                    formData.get('username'),
+                    formData.get('name'),
                     formData.get('email'),
                     formData.get('password')
                 );

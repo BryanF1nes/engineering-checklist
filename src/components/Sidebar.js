@@ -8,8 +8,8 @@ export class Sidebar {
     }
 
     render(projects, activeProject, user) {
-        const formattedUsername = user.username.charAt(0).toUpperCase() + user.username.slice(1);
-        const avatar = user.username.charAt(0).toUpperCase();
+        const formattedName = user.name.charAt(0).toUpperCase() + user.name.slice(1);
+        const avatar = user.name.charAt(0).toUpperCase();
 
         this.container.innerHTML = `
             <div class="sidebar-header">
@@ -35,8 +35,8 @@ export class Sidebar {
                     </div>
 
                     <div class="account-details">
-                        <span class="account-username">
-                            ${formattedUsername}
+                        <span class="account-name">
+                            ${formattedName}
                         </span>
 
                         <span class="account-email">
@@ -59,7 +59,7 @@ export class Sidebar {
             ></div>
         `;
 
-        this.storageKey = `sidebar-width-${user.id ?? user.username}`;
+        this.storageKey = `sidebar-width-${user.id ?? user.name}`;
 
         const savedWidth = localStorage.getItem(this.storageKey);
 

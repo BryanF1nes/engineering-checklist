@@ -1252,7 +1252,7 @@ button {
     min-width: 0;
 }
 
-.account-username {
+.account-name {
     color: var(--text);
     font-size: 0.9rem;
     font-weight: 700;
