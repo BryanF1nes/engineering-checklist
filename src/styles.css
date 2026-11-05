@@ -1457,6 +1457,7 @@ body.light .form-group input[type="date"] {
     display: flex;
     flex-direction: row-reverse;
     align-items: center;
+    cursor: pointer;
 }
 
 .member-avatar {
@@ -1476,7 +1477,7 @@ body.light .form-group input[type="date"] {
     font-size: 0.85rem;
     font-weight: 600;
 
-    cursor: default;
+    cursor: pointer;
 }
 
 .member-avatar+.member-avatar {
@@ -1488,4 +1489,103 @@ body.light .form-group input[type="date"] {
     color: var(--text);
     border: 2px solid var(--border-muted);
     font-size: 0.75rem;
+}
+
+.member-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+}
+
+.member-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.member-row:last-child {
+    border-bottom: none;
+}
+
+.member-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.member-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.member-details p {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.member-details span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.member-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.65rem;
+    flex-shrink: 0;
+}
+
+.member-role {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: capitalize;
+}
+
+.member-role-select,
+.remove-member {
+    padding: 0.45rem 0.65rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: #252525;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.member-role-select {
+    color: var(--text);
+}
+
+.member-role-select:hover {
+    background: #303030;
+}
+
+.member-role-select:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.remove-member {
+    color: var(--danger);
+}
+
+.remove-member:hover {
+    background: #3a2525;
+    border-color: var(--danger);
+}
+
+.leave-project {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
 }

@@ -86,7 +86,7 @@ export class ProjectView {
                 </div>
 
                 <div class="project-actions-container">
-                    <div class="project-members">
+                    <div class="project-members" id="projectMembers" role="button" tabindex="0" aria-label="Manage project members">
                         ${members.map(member => `
                             <div
                                 class="member-avatar"
@@ -320,6 +320,10 @@ export class ProjectView {
     }
 
     bindEvents(project) {
+        this.container.querySelector('#projectMembers')
+            .addEventListener('click', () => {
+                this.appController.manageMembers(project);
+            });
 
         this.container.querySelector('#addItem')
             .addEventListener('click', () => {

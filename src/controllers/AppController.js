@@ -553,4 +553,31 @@ export class AppController {
             console.error('Failed to refresh project:', error);
         }
     }
+
+    manageMembers() {
+        if (!this.activeProject || !this.user) return;
+
+        const isOwner = this.activeProject.owner.id === this.user.id;
+
+        this.modal.openMembers(
+            this.activeProject,
+            this.user.id,
+            {
+                isOwner,
+                getAvatarColor: this.projectView.getAvatarColor.bind(this.projectView),
+
+                onRoleChange: (memberId, role) => {
+                    console.log('Change member role:', memberId, role);
+                },
+
+                onRemove: memberId => {
+                    console.log('Remove member:', memberId);
+                },
+
+                onLeave: () => {
+                    console.log('Leave project');
+                },
+            }
+        );
+    }
 }

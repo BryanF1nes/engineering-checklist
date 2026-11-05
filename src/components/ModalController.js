@@ -201,6 +201,117 @@ export class ModalController {
         });
     }
 
+    openMembers(project, currentUserId, isOwner) {
+        const members = [
+            {
+                user: project.owner,
+                role: 'OWNER',
+            },
+            ...(project.members || []).filter(
+                member => member.user.id !== project.owner.id
+            ),
+        ];
+
+        const memberRows = members.map(member => {
+            const isCurrentUser = member.user.id === currentUserId;
+            const isProjectOwner = member.role === 'OWNER';
+
+            return `
+            <div class="member-row">
+                <div class="member-info">
+                    <div
+                        class="member-avatar"
+                        style="background-color: ${this.getAvatarColor(member.user.id)}"
+                    >
+                        ${this.escapeHTML(member.user.name.charAt(0).toUpperCase())}
+                    </div>
+
+                    <div class="member-details">
+                        <p>${this.escapeHTML(member.user.name)}</p>
+                        <span>${isCurrentUser ? 'You' : ''}</span>
+                    </div>
+                </div>
+
+                <div class="member-controls">
+                    ${isProjectOwner
+                    ? '<span class="member-role">Owner</span>'
+                    : isOwner
+                        ? `
+                            <button
+                                type="button"
+                                class="remove-member"
+                                data-member-id="${member.user.id}"
+                                aria-label="Remove ${this.escapeHTML(member.user.name)}"
+                            >
+                                Remove
+                            </button>
+
+                                <select
+                                    class="member-role-select"
+                                    data-member-id="${member.user.id}"
+                                    aria-label="Role for ${this.escapeHTML(member.user.name)}"
+                                >
+                                    <option value="CONTRIBUTOR"
+                                        ${member.role === 'CONTRIBUTOR' ? 'selected' : ''}
+                                    >
+                                        Contributor
+                                    </option>
+                                    <option value="VIEWER"
+                                        ${member.role === 'VIEWER' ? 'selected' : ''}
+                                    >
+                                        Viewer
+                                    </option>
+                                </select>
+
+                            `
+                        : `<span class="member-role">${member.role}</span>`
+                }
+                </div>
+            </div>
+        `;
+        }).join('');
+
+        this.open({
+            title: 'Project Members',
+            description: `Manage members of ${this.escapeHTML(project.name)}.`,
+
+            fields: `
+            <div class="member-list">
+                ${memberRows}
+            </div>
+
+            ${!isOwner ? `
+                <div class="leave-project">
+                    <button
+                        type="button"
+                        id="leaveProject"
+                        class="remove-member"
+                    >
+                        Leave Project
+                    </button>
+                </div>
+            ` : ''}
+        `,
+
+            submitLabel: 'Done',
+            onSubmit: () => { },
+        });
+    }
+
+    getAvatarColor(userId) {
+        const colors = [
+            '#647ACB',
+            '#3D9970',
+            '#D17B46',
+            '#A16DB5',
+            '#C45D75',
+            '#368F9B',
+            '#B18B3D',
+        ];
+
+        return colors[userId % colors.length];
+    }
+
     showInvitation(invitation) {
         const url = this.escapeHTML(invitation.url);
 
@@ -294,7 +405,7 @@ export class ModalController {
         document.addEventListener('keydown', this.onKeyDown);
     }
 
-    open({ title, description, fields, submitLabel, onSubmit }) {
+    open({ title, description, fields, submitLabel, onSubmit, onOpen }) {
 
         this.container.innerHTML = `
             <div class="modal-overlay">
@@ -383,8 +494,137 @@ export class ModalController {
         });
 
         document.addEventListener('keydown', this.onKeyDown);
+        onOpen?.(modal);
 
         modal.querySelector('input')?.focus();
+    }
+
+    openMembers(project, currentUserId, {
+        isOwner,
+        getAvatarColor,
+        onRoleChange,
+        onRemove,
+        onLeave,
+    }) {
+        const members = [
+            {
+                user: project.owner,
+                role: 'OWNER',
+            },
+            ...(project.members || []).filter(
+                member => member.user.id !== project.owner.id
+            ),
+        ];
+
+        const memberRows = members.map(member => {
+            const isProjectOwner = member.role === 'OWNER';
+            const isCurrentUser = member.user.id === currentUserId;
+
+            const initial = member.user.name
+                .charAt(0)
+                .toUpperCase();
+
+            return `
+            <div class="member-row">
+                <div class="member-info">
+                    <div
+                        class="member-avatar"
+                        style="background-color: ${getAvatarColor(member.user.id)}"
+                    >
+                        ${this.escapeHTML(initial)}
+                    </div>
+
+                    <div class="member-details">
+                        <p>${this.escapeHTML(member.user.name)}</p>
+                        ${isCurrentUser ? '<span>You</span>' : ''}
+                    </div>
+                </div>
+
+                <div class="member-controls">
+                    ${isProjectOwner
+                    ? '<span class="member-role">Owner</span>'
+                    : isOwner
+                        ? `
+                                    <select
+                                        class="member-role-select"
+                                        data-member-id="${member.user.id}"
+                                        aria-label="Change role for ${this.escapeHTML(member.user.name)}"
+                                    >
+                                        <option
+                                            value="CONTRIBUTOR"
+                                            ${member.role === 'CONTRIBUTOR' ? 'selected' : ''}
+                                        >
+                                            Contributor
+                                        </option>
+                                        <option
+                                            value="VIEWER"
+                                            ${member.role === 'VIEWER' ? 'selected' : ''}
+                                        >
+                                            Viewer
+                                        </option>
+                                    </select>
+
+                                    <button
+                                        type="button"
+                                        class="remove-member"
+                                        data-member-id="${member.user.id}"
+                                    >
+                                        Remove
+                                    </button>
+                                `
+                        : `<span class="member-role">${this.escapeHTML(member.role)}</span>`
+                }
+                </div>
+            </div>
+        `;
+        }).join('');
+
+        this.open({
+            title: 'Project Members',
+            description: 'View and manage the people who have access to this project.',
+            fields: `
+            <div class="member-list">
+                ${memberRows}
+            </div>
+
+            ${!isOwner
+                    ? `
+                        <div class="leave-project">
+                            <button
+                                type="button"
+                                id="leaveProject"
+                                class="remove-member"
+                            >
+                                Leave Project
+                            </button>
+                        </div>
+                    `
+                    : ''
+                }
+        `,
+            submitLabel: 'Done',
+            onSubmit: () => { },
+            onOpen: modal => {
+                modal.querySelectorAll('.member-role-select').forEach(select => {
+                    select.addEventListener('change', () => {
+                        onRoleChange?.(
+                            Number(select.dataset.memberId),
+                            select.value
+                        );
+                    });
+                });
+
+                modal.querySelectorAll('.remove-member[data-member-id]').forEach(button => {
+                    button.addEventListener('click', () => {
+                        onRemove?.(Number(button.dataset.memberId));
+                    });
+                });
+
+                modal.querySelector('#leaveProject')?.addEventListener('click', () => {
+                    onLeave?.();
+                });
+            },
+        });
     }
 
     escapeHTML(value) {
