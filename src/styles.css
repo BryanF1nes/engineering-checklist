@@ -1553,21 +1553,21 @@ body.light .form-group input[type="date"] {
 
 .member-role-select,
 .remove-member {
-    padding: 0.45rem 0.65rem;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    background: #252525;
-    font-size: 0.8rem;
+    padding: 0.65rem 1.1rem;
+    background: var(--bg-dark);
+    font-size: 0.9rem;
     cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease;
+    border: var(--border-card);
+    border-radius: 0.5rem;
+}
+
+.remove-member {
+    background: var(--primary);
+    color: var(--bg-dark);
 }
 
 .member-role-select {
     color: var(--text);
-}
-
-.member-role-select:hover {
-    background: #303030;
 }
 
 .member-role-select:focus {
@@ -1575,12 +1575,7 @@ body.light .form-group input[type="date"] {
     outline-offset: 2px;
 }
 
-.remove-member {
-    color: var(--danger);
-}
-
 .remove-member:hover {
-    background: #3a2525;
     border-color: var(--danger);
 }
 
