@@ -9,6 +9,8 @@
     padding: 0;
     box-sizing: border-box;
     font-family: var(--ff);
+
+    /* border: 1px solid red; */
 }
 
 html,
@@ -348,10 +350,20 @@ button {
     cursor: col-resize;
     touch-action: none;
     z-index: 10;
+
+    background: transparent;
+    transition: background-color 150ms ease;
 }
 
-.sidebar-resizer:hover {
-    background: var(--accent-color);
+.sidebar-resizer:hover,
+.sidebar-resizer:active {
+    background: var(--primary);
+}
+
+.sidebar-resizer::after {
+    content: "";
+    position: absolute;
+    inset: 0 -5px;
 }
 
 .sidebar-header,
@@ -534,6 +546,8 @@ button {
 
     border-radius: 0.6rem;
 
+    min-width: 0;
+
     cursor: pointer;
     transition: var(--transition);
 }
@@ -553,6 +567,7 @@ button {
 
     width: 36px;
     height: 36px;
+    flex-shrink: 0;
 
     background: var(--bg-light);
     border-radius: 0.5rem;
@@ -562,6 +577,16 @@ button {
     color: var(--text);
     font-weight: 600;
     font-size: 0.9rem;
+
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.project-card > div:last-child {
+    min-width: 0;
+    flex: 1;
 }
 
 .project-status {
@@ -1125,6 +1150,41 @@ body.light .form-group input[type="date"] {
 }
 
 @media (max-width: 600px) {
+    .sidebar-resizer {
+        display: none;
+    }
+
+    .app-container {
+        grid-template-columns: 1fr;
+        flex: 1 0 auto;
+        min-height: auto;
+    }
+
+    .main-content {
+        min-height: auto;
+        overflow: visible;
+    }
+
+    .checklist-section {
+        flex: 0 0 auto;
+        min-height: auto;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .checklist {
+        flex: initial;
+        width: 100%;
+        max-width: 100%;
+        max-height: none;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .checklist-item {
+        min-width: 650px;
+    }
+
     .app-container {
         grid-template-columns: 1fr;
     }
