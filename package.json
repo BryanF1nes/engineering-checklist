@@ -8,7 +8,7 @@
     "watch": "jest --watch",
     "build": "webpack --config webpack.config.js",
     "pretty": "prettier . --write",
-    "deploy": "git subtree push --prefix dist origin gh-pages"
+    "deploy": "bash deploy.sh"
   },
   "keywords": [],
   "author": "",
