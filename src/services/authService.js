@@ -1,4 +1,4 @@
-import { apiRequest } from './api.js';
+import { apiRequest, setTokens, clearTokens } from './api.js';
 
 export async function register(name, email, password) {
     return apiRequest('/auth/register', {
@@ -12,13 +12,20 @@ export async function register(name, email, password) {
 }
 
 export async function login(email, password) {
-    return apiRequest('/auth/login', {
+    const data = await apiRequest('/auth/login', {
         method: 'POST',
         body: {
             email,
             password,
         },
     });
+
+    setTokens(data);
+
+    return {
+        message: data.message,
+        user: data.user,
+    };
 }
 
 export async function getCurrentUser() {
@@ -26,8 +33,14 @@ export async function getCurrentUser() {
 }
 
 export async function logout() {
-    return apiRequest('/auth/logout', {
-        method: 'POST',
-    });
-}
+    const refreshToken = sessionStorage.getItem('refreshToken');
 
+    try {
+        return await apiRequest('/auth/logout', {
+            method: 'POST',
+            body: { refreshToken },
+        });
+    } finally {
+        clearTokens();
+    }
+}

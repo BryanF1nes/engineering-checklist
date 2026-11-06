@@ -3,7 +3,7 @@ import { ProjectView } from '../components/ProjectView.js';
 import { ModalController } from '../components/ModalController.js';
 import { AuthView } from '../components/AuthView.js';
 import { Notification } from '../components/Notification.js';
-import { API_BASE_URL } from '../services/api.js';
+import { API_BASE_URL, getAccessToken } from '../services/api.js';
 import { io } from 'socket.io-client';
 
 import * as projectService from '../services/projectService.js';
@@ -49,11 +49,15 @@ export class AppController {
         );
     }
 
+
     async init() {
+        this.showAuthentication();
+
         try {
             const response = await authService.getCurrentUser();
 
             this.user = response.user;
+
             this.connectSocket();
             this.showApplication();
 
@@ -68,9 +72,12 @@ export class AppController {
 
             console.error('Failed to initialize application:', error);
 
-            alert('Unable to load the application. Please try again.');
+            this.notification.error(
+                'Unable to load the application. Please try again.'
+            );
         }
     }
+
 
     showAuthentication() {
         this.appContainer.hidden = true;
@@ -125,7 +132,9 @@ export class AppController {
     async logout() {
         try {
             await authService.logout();
-
+        } catch (error) {
+            console.error('Logout request failed:', error);
+        } finally {
             if (this.socket) {
                 this.socket.disconnect();
                 this.socket = null;
@@ -136,13 +145,9 @@ export class AppController {
             this.activeProject = null;
 
             this.showAuthentication();
-
-            this.notification.success('You have successfully signed out.');
-
-        } catch (error) {
-            console.error('Logout failed:', error);
-            alert('Unable to sign out. Please try again.');
         }
+
+        this.notification.success('You have successfully signed out.');
     }
 
     async loadProjects() {
@@ -489,7 +494,11 @@ export class AppController {
         if (this.socket) return;
 
         this.socket = io(API_BASE_URL, {
-            withCredentials: true,
+            auth: callback => {
+                callback({
+                    token: getAccessToken(),
+                });
+            }
         });
 
         this.socket.on('connect', () => {
