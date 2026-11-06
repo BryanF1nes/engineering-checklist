@@ -13,9 +13,9 @@
 
 html,
 body {
-    min-height: 100%;
+    height: 100%;
+    min-height: 0;
 }
-
 
 /* ========================================
    Dark Theme - Charcoal & Muted Teal
@@ -175,7 +175,9 @@ body {
     display: flex;
     flex-direction: column;
 
-    min-height: 100vh;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
 
     background: var(--bg-dark);
     color: var(--text-muted);
@@ -208,6 +210,7 @@ button:hover {
    Header
 ======================================== */
 
+
 .app-header {
     display: flex;
     align-items: center;
@@ -217,6 +220,10 @@ button:hover {
 
     background: var(--bg);
     border-bottom: var(--border-card);
+}
+
+.app-header {
+    flex: 0 0 auto;
 }
 
 .logo {
@@ -307,9 +314,11 @@ button {
 ======================================== */
 .app-container {
     display: grid;
-    grid-template-columns: var(--sidebar-width, 320px) 1fr;
+    /* grid-template-columns: var(--sidebar-width, 320px) 1fr; */
+    grid-template-columns: var(--sidebar-width, 320px) minmax(0, 1fr);
 
-    flex: 1;
+    /* flex: 1; */
+    flex: 1 1 auto;
     align-items: stretch;
 
     min-height: 0;
@@ -352,6 +361,12 @@ button {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.project-header,
+.project-details,
+.project-section {
+    flex-shrink: 0;
 }
 
 .sidebar-header {
@@ -558,9 +573,15 @@ button {
 ======================================== */
 
 .main-content {
-    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+
+    /* padding: 3rem; */
+    padding: clamp(1.25rem, 2.5vw, 3rem);
+
     min-width: 0;
     min-height: 0;
+
     overflow: hidden;
 }
 
@@ -588,10 +609,17 @@ button {
 
 .project-details {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+
+    /* grid-template-columns: repeat(3, 1fr); */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
     gap: 1rem;
 
     margin-bottom: 2rem;
+}
+
+.detail-card {
+    min-width: 0;
 }
 
 .detail-card {
@@ -657,6 +685,12 @@ button {
 ======================================== */
 
 .checklist-section {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1 1 auto;
+    min-height: 0;
+
     background: var(--bg);
 
     border: var(--border-card);
@@ -682,9 +716,20 @@ button {
 .checklist {
     display: flex;
     flex-direction: column;
-    max-height: clamp(250px, calc(100vh - 800px), 600px);
+
+    flex: 1 1 0;
+    min-height: 0;
+
+    max-height: none;
+
+    /* max-height: clamp(250px, calc(100vh - 800px), 600px); */
     overflow-y: auto;
     padding-right: 0.5rem;
+}
+
+.checklist-header,
+.checklist-filters {
+    flex-shrink: 0;
 }
 
 .checklist-item {
@@ -1583,4 +1628,20 @@ body.light .form-group input[type="date"] {
     margin-top: 1rem;
     padding-top: 1rem;
     border-top: 1px solid var(--border);
+}
+
+@media (max-height: 700px) {
+    .main-content {
+        overflow-y: auto;
+    }
+
+    .checklist-section {
+        flex: 0 0 auto;
+    }
+
+    .checklist {
+        flex: initial;
+        max-height: 40vh;
+        min-height: 180px;
+    }
 }

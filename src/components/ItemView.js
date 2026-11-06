@@ -10,9 +10,12 @@ export class ItemView {
             ? `${completedByName.charAt(0).toUpperCase() + completedByName.slice(1)} marked as completed`
             : 'On going';
 
-        const [year, month, day] = item.dueDate.split('T')[0].split('-');
+        let formattedDate = "No due date";
 
-        const dueDate = new Date(year, month - 1, day).toLocaleDateString();
+        if (item.dueDate) {
+            const [year, month, day] = item.dueDate.split('T')[0].split('-');
+            formattedDate = `${month}/${day}/${year}`;
+        }
 
         const duration = formatDuration(item.estimatedDuration);
 
@@ -50,7 +53,7 @@ export class ItemView {
                         </p>
 
                         <span class="item-date">
-                            Expected completion: ${dueDate}
+                            Expected completion: ${formattedDate}
                         </span>
                     </div>
 
@@ -64,7 +67,6 @@ export class ItemView {
                 <div class="item-actions">
 
                     <button
-                        id="editItem"
                         class="icon-button item-edit"
                         type="button"
                         aria-label="Edit task"
