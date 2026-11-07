@@ -112,13 +112,33 @@ body.light {
 
 /* Typography */
 
-h1 { font: var(--h1); }
-h2 { font: var(--h2); }
-h3 { font: var(--h3); }
-h4 { font: var(--h4); }
-h5 { font: var(--h5); }
-h6 { font: var(--h6); }
-p  { font: var(--p); }
+h1 {
+    font: var(--h1);
+}
+
+h2 {
+    font: var(--h2);
+}
+
+h3 {
+    font: var(--h3);
+}
+
+h4 {
+    font: var(--h4);
+}
+
+h5 {
+    font: var(--h5);
+}
+
+h6 {
+    font: var(--h6);
+}
+
+p {
+    font: var(--p);
+}
 
 input,
 select,
@@ -375,7 +395,7 @@ body {
     background: var(--bg-light);
 }
 
-.project-card > div:last-child {
+.project-card>div:last-child {
     flex: 1;
     min-width: 0;
 }
@@ -618,7 +638,7 @@ body {
     cursor: pointer;
 }
 
-.member-avatar + .member-avatar {
+.member-avatar+.member-avatar {
     margin-right: -10px;
 }
 
@@ -1036,7 +1056,7 @@ body.light .form-group input[type="date"] {
     font-size: 1.8rem;
 }
 
-.auth-card > p {
+.auth-card>p {
     margin-bottom: 2rem;
     color: var(--text-muted);
     font-size: 0.9rem;
@@ -1074,6 +1094,88 @@ body.light .form-group input[type="date"] {
     transform: none;
     opacity: 0.8;
     text-decoration: underline;
+}
+
+/* ========================================
+   Loading State
+======================================== */
+
+.loading-container {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+#loadingState,
+#initializationError {
+    max-width: 400px;
+    padding: 24px;
+}
+
+#initializationError {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    max-width: 400px;
+    padding: 24px;
+}
+
+.error-icon {
+    display: block;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    overflow: visible;
+    color: var(--text-secondary);
+}
+
+#initializationErrorTitle {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+#initializationErrorMessage {
+    margin: 0;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.retry-button {
+    margin-top: 12px;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+body.light .retry-button {
+    background-color: #171717;
+    color: #ffffff;
+}
+
+body.light .retry-button:hover {
+    background-color: #333333;
+}
+
+body.dark .retry-button {
+    background-color: #ffffff;
+    color: #171717;
+}
+
+body.dark .retry-button:hover {
+    background-color: #e5e5e5;
+}
+
+[hidden] {
+    display: none !important;
 }
 
 /* ========================================
@@ -1235,10 +1337,21 @@ body.light .form-group input[type="date"] {
     animation: notification-enter 200ms ease-out;
 }
 
-.notification-success { border-left: 4px solid var(--success); }
-.notification-error   { border-left: 4px solid var(--danger); }
-.notification-warning { border-left: 4px solid var(--warning); }
-.notification-info    { border-left: 4px solid var(--info); }
+.notification-success {
+    border-left: 4px solid var(--success);
+}
+
+.notification-error {
+    border-left: 4px solid var(--danger);
+}
+
+.notification-warning {
+    border-left: 4px solid var(--warning);
+}
+
+.notification-info {
+    border-left: 4px solid var(--info);
+}
 
 .notification-message {
     font-size: 0.9rem;
@@ -1257,8 +1370,13 @@ body.light .form-group input[type="date"] {
 ======================================== */
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes slideUp {
@@ -1432,4 +1550,3 @@ body.light .form-group input[type="date"] {
         border-color var(--transition),
         color var(--transition);
 }
-

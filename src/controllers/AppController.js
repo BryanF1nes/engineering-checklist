@@ -24,6 +24,15 @@ export class AppController {
 
         this.authContainer = document.querySelector('#authContainer');
         this.appContainer = document.querySelector('#appContainer');
+        this.loadingContainer = document.querySelector('#loadingContainer');
+        this.loadingState = document.querySelector('#loadingState');
+        this.initializationError = document.querySelector('#initializationError');
+        this.initializationErrorMessage = document.querySelector('#initializationErrorMessage');
+        this.retryInitializationButton = document.querySelector('#retryInitialization');
+
+        this.retryInitializationButton.addEventListener('click', () => {
+            this.retryInitialization();
+        });
 
         this.notification = new Notification(
             document.querySelector('#notification-container')
@@ -51,7 +60,7 @@ export class AppController {
 
 
     async init() {
-        this.showAuthentication();
+        this.showLoading();
 
         try {
             const response = await authService.getCurrentUser();
@@ -65,21 +74,54 @@ export class AppController {
             await this.loadProjects();
 
         } catch (error) {
+            console.error('Failed to initialize application:', error);
+
             if (error.status === 401) {
+                this.user = null;
                 this.showAuthentication();
                 return;
             }
 
-            console.error('Failed to initialize application:', error);
+            if (error.status === 403) {
+                this.showInitializationError('You do not have permission to access this application.');
+                return;
+            }
 
-            this.notification.error(
-                'Unable to load the application. Please try again.'
-            );
+            if (!error.status) {
+                this.showInitializationError('Unable to connect to the server. Check your internet connection.');
+                return;
+            }
+
+            this.showInitializationError('Something went wrong while loading the application. Please try again.');
         }
     }
 
+    async retryInitialization() {
+        await this.init();
+    }
+
+    showInitializationError(message) {
+        this.loadingContainer.hidden = false;
+        this.loadingState.hidden = true;
+        this.initializationError.hidden = false;
+
+        this.initializationErrorMessage.textContent = message;
+
+        this.authContainer.hidden = true;
+        this.appContainer.hidden = true;
+    }
+
+    showLoading() {
+        this.loadingContainer.hidden = false;
+        this.loadingState.hidden = false;
+        this.initializationError.hidden = true;
+
+        this.authContainer.hidden = true;
+        this.appContainer.hidden = true;
+    }
 
     showAuthentication() {
+        this.loadingContainer.hidden = true;
         this.appContainer.hidden = true;
         this.authContainer.hidden = false;
 
@@ -87,6 +129,7 @@ export class AppController {
     }
 
     showApplication() {
+        this.loadingContainer.hidden = true;
         this.authContainer.hidden = true;
         this.appContainer.hidden = false;
     }
@@ -125,7 +168,7 @@ export class AppController {
 
         } catch (error) {
             console.error('Registration failed:', error);
-            alert(error.message || 'Unable to create your account.');
+            this.notification.error(error.message || 'Unable to create your account.');
         }
     }
 
@@ -211,10 +254,11 @@ export class AppController {
                 await this.loadProjectDetails(response.project.id);
 
                 this.render();
+                this.notification.success('Project created successfully.');
 
             } catch (error) {
                 console.error('Failed to create project:', error);
-                alert(error.message || 'Unable to create project.');
+                this.notification.error(error.message || 'Unable to create project.');
             }
         });
     }
@@ -258,7 +302,7 @@ export class AppController {
 
             } catch (error) {
                 console.error('Failed to update project:', error);
-                alert(error.message || 'Unable to update project.');
+                this.notification.error(error.message || 'Unable to update project.');
             }
         }, this.activeProject);
     }
@@ -296,7 +340,7 @@ export class AppController {
 
         } catch (error) {
             console.error('Failed to delete project:', error);
-            alert(error.message || 'Unable to delete project.');
+            this.notification.error(error.message || 'Unable to delete project.');
         }
     }
 
@@ -325,7 +369,7 @@ export class AppController {
 
             } catch (error) {
                 console.error('Failed to create invitation:', error);
-                alert(error.message || 'Unable to create invitation.');
+                this.notification.error(error.message || 'Unable to create invitation.');
             }
         }, project);
     }
@@ -345,10 +389,10 @@ export class AppController {
 
             window.history.replaceState({}, '', url);
 
-            alert('Invitation accepted! The shared project is now available.');
+            this.notification.success('Invitation accepted! The share project is now availble.');
         } catch (error) {
             console.error('Failed to accept invitation:', error);
-            alert(error.message || 'Unable to accept this invitation.');
+            this.notification.error(error.message || 'Unable to accept this invitation.');
         }
     }
 
@@ -359,7 +403,7 @@ export class AppController {
 
         } catch (error) {
             console.error('Failed to load project:', error);
-            alert('Unable to load the selected project.');
+            this.notification.error('Unable to load the selected project.');
         }
     }
 
@@ -427,7 +471,7 @@ export class AppController {
 
             } catch (error) {
                 console.error('Failed to update checklist item:', error);
-                alert(error.message || 'Unable to update checklist item.');
+                this.notification.error(error.message || 'Unable to update checklist item.');
             }
         }, item);
     }
@@ -459,7 +503,7 @@ export class AppController {
 
         } catch (error) {
             console.error('Failed to delete checklist item:', error);
-            alert(error.message || 'Unable to delete checklist item.');
+            this.notification.error(error.message || 'Unable to delete checklist item.');
         }
     }
 
@@ -486,7 +530,7 @@ export class AppController {
 
         } catch (error) {
             console.error('Failed to update checklist item status:', error);
-            alert(error.message);
+            this.notification.error(error.message || 'Unable to update the checklist item status.');
         }
     }
 
@@ -502,8 +546,6 @@ export class AppController {
         });
 
         this.socket.on('connect', () => {
-            console.log('Connected to Socket.IO:', this.socket.id);
-
             if (this.activeProject) {
                 this.joinProjectRoom(this.activeProject.id);
             }
@@ -535,9 +577,26 @@ export class AppController {
             this.refreshActiveProject();
         });
 
-        this.socket.on('project:deleted', () => {
-            this.refreshActiveProject();
+        this.socket.on('project:deleted', ({ projectId }) => {
+            this.handleProjectDeleted(projectId);
         });
+    }
+
+    handleProjectDeleted(projectId) {
+        this.projects = this.projects.filter(
+            project => project.id !== projectId
+        );
+
+        if (this.activeProject?.id === projectId) {
+            this.activeProject = null;
+        }
+
+        if (this.projects.length > 0 && !this.activeProject) {
+            this.selectProject(this.projects[0].id);
+            return;
+        }
+
+        this.render();
     }
 
     joinProjectRoom(projectId) {
@@ -548,8 +607,6 @@ export class AppController {
                 console.error('Failed to join project room:', response.message);
                 return;
             }
-
-            console.log(`Joined project room: ${response.projectId}`);
         });
     }
 

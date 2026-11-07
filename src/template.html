@@ -38,6 +38,33 @@
 
     <div id="modalContainer"></div>
     <div id="notification-container" aria-live="polite"></div>
+    <div id="loadingContainer" class="loading-container">
+
+        <!-- Loading State -->
+        <div id="loadingState">
+            <div class="loading-spinner"></div>
+            <p>Restoring your session...</p>
+        </div>
+
+        <!-- Initialization Error State -->
+        <div id="initializationError" hidden>
+            <svg class="error-icon" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 28 28"
+                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true">
+                <path d="M23 18.2A5 5 0 0 0 20 8.5h-1.3A7.5 7.5 0 0 0 4 12.5a4.5 4.5 0 0 0 1 8.9h13" />
+                <path d="m4 4 20 20" />
+            </svg>
+            <h2 id="initializationErrorTitle">Unable to load application</h2>
+
+            <p id="initializationErrorMessage">
+                Something went wrong while loading the application.
+            </p>
+
+            <button id="retryInitialization" class="retry-button" type="button">
+                Try Again
+            </button>
+        </div>
+    </div>
 
     <script src="./index.js"></script>
 
