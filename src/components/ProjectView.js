@@ -90,7 +90,7 @@ export class ProjectView {
                         ${members.map(member => `
                             <div
                                 class="member-avatar"
-                                style="background-color: ${this.getAvatarColor(member.user.id)}"
+                                style="background-color: ${member.user.avatarColor || '#808080'}"
                                 title="${this.escapeHTML(member.user.name)} (${member.role})"
                             >
                                 ${this.escapeHTML(member.user.name.charAt(0).toUpperCase())}
@@ -303,20 +303,6 @@ export class ProjectView {
 
             </div>
         `;
-    }
-
-    getAvatarColor(userId) {
-        const colors = [
-            '#647ACB',
-            '#3D9970',
-            '#D17B46',
-            '#A16DB5',
-            '#C45D75',
-            '#368F9B',
-            '#B18B3D',
-        ];
-
-        return colors[userId % colors.length];
     }
 
     bindEvents(project) {

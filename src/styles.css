@@ -436,10 +436,21 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: var(--primary-muted);
-    color: var(--primary);
+    color: white;
     font-weight: 700;
     text-transform: uppercase;
+
+    cursor: pointer;
+    transition: filter 0.15s ease;
+}
+
+.account-avatar:hover {
+    filter: brightness(1.15);
+}
+
+.account-avatar:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 3px;
 }
 
 .account-details {
@@ -845,6 +856,48 @@ body {
 .filter-empty-state p {
     margin: 0;
     font-size: 0.9rem;
+}
+
+/* ========================================
+   Avatar Color Picker
+======================================== */
+
+.avatar-color-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    padding: 16px 0;
+}
+
+.avatar-color-option {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-color-option input {
+    position: absolute;
+    opacity: 0;
+}
+
+.avatar-color-swatch {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    transition: outline-color 0.15s ease;
+}
+
+.avatar-color-option input:checked+.avatar-color-swatch {
+    outline-color: var(--text-color);
+}
+
+.avatar-color-option input:focus-visible+.avatar-color-swatch {
+    outline-color: var(--primary-color);
 }
 
 /* ========================================

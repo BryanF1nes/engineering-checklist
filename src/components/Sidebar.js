@@ -30,7 +30,14 @@ export class Sidebar {
             </div>
             <div class="sidebar-account">
                 <div class="account-profile">
-                    <div class="account-avatar">
+                    <div 
+                        class="account-avatar" 
+                        style="background-color: ${user.avatarColor || '#808080'}"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Change avatar color"
+                        title="Change avatar color"
+                    >
                         ${avatar}
                     </div>
 
@@ -92,6 +99,19 @@ export class Sidebar {
             .addEventListener('click', () => {
                 this.appController.logout();
             });
+
+        const avatar = this.container.querySelector('.account-avatar');
+
+        avatar.addEventListener('click', () => {
+            this.appController.promptForAvatarColor(true);
+        });
+
+        avatar.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                this.appController.promptForAvatarColor(true);
+            }
+        })
 
         this.bindResizer();
     }

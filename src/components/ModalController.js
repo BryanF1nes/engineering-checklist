@@ -201,117 +201,6 @@ export class ModalController {
         });
     }
 
-    openMembers(project, currentUserId, isOwner) {
-        const members = [
-            {
-                user: project.owner,
-                role: 'OWNER',
-            },
-            ...(project.members || []).filter(
-                member => member.user.id !== project.owner.id
-            ),
-        ];
-
-        const memberRows = members.map(member => {
-            const isCurrentUser = member.user.id === currentUserId;
-            const isProjectOwner = member.role === 'OWNER';
-
-            return `
-            <div class="member-row">
-                <div class="member-info">
-                    <div
-                        class="member-avatar"
-                        style="background-color: ${this.getAvatarColor(member.user.id)}"
-                    >
-                        ${this.escapeHTML(member.user.name.charAt(0).toUpperCase())}
-                    </div>
-
-                    <div class="member-details">
-                        <p>${this.escapeHTML(member.user.name)}</p>
-                        <span>${isCurrentUser ? 'You' : ''}</span>
-                    </div>
-                </div>
-
-                <div class="member-controls">
-                    ${isProjectOwner
-                    ? '<span class="member-role">Owner</span>'
-                    : isOwner
-                        ? `
-                            <button
-                                type="button"
-                                class="remove-member"
-                                data-member-id="${member.user.id}"
-                                aria-label="Remove ${this.escapeHTML(member.user.name)}"
-                            >
-                                Remove
-                            </button>
-
-                                <select
-                                    class="member-role-select"
-                                    data-member-id="${member.user.id}"
-                                    aria-label="Role for ${this.escapeHTML(member.user.name)}"
-                                >
-                                    <option value="CONTRIBUTOR"
-                                        ${member.role === 'CONTRIBUTOR' ? 'selected' : ''}
-                                    >
-                                        Contributor
-                                    </option>
-                                    <option value="VIEWER"
-                                        ${member.role === 'VIEWER' ? 'selected' : ''}
-                                    >
-                                        Viewer
-                                    </option>
-                                </select>
-
-                            `
-                        : `<span class="member-role">${member.role}</span>`
-                }
-                </div>
-            </div>
-        `;
-        }).join('');
-
-        this.open({
-            title: 'Project Members',
-            description: `Manage members of ${this.escapeHTML(project.name)}.`,
-
-            fields: `
-            <div class="member-list">
-                ${memberRows}
-            </div>
-
-            ${!isOwner ? `
-                <div class="leave-project">
-                    <button
-                        type="button"
-                        id="leaveProject"
-                        class="remove-member"
-                    >
-                        Leave Project
-                    </button>
-                </div>
-            ` : ''}
-        `,
-
-            submitLabel: 'Done',
-            onSubmit: () => { },
-        });
-    }
-
-    getAvatarColor(userId) {
-        const colors = [
-            '#647ACB',
-            '#3D9970',
-            '#D17B46',
-            '#A16DB5',
-            '#C45D75',
-            '#368F9B',
-            '#B18B3D',
-        ];
-
-        return colors[userId % colors.length];
-    }
-
     showInvitation(invitation) {
         const url = this.escapeHTML(invitation.url);
 
@@ -501,7 +390,6 @@ export class ModalController {
 
     openMembers(project, currentUserId, {
         isOwner,
-        getAvatarColor,
         onRoleChange,
         onRemove,
         onLeave,
@@ -529,7 +417,7 @@ export class ModalController {
                 <div class="member-info">
                     <div
                         class="member-avatar"
-                        style="background-color: ${getAvatarColor(member.user.id)}"
+                        style="background-color: ${member.user.avatarColor || '#808080'}"
                     >
                         ${this.escapeHTML(initial)}
                     </div>
@@ -624,6 +512,50 @@ export class ModalController {
                     onLeave?.();
                 });
             },
+        });
+    }
+
+    openAvatarColor(onSubmit, currentColor = null) {
+        const colors = [
+            '#4A80C5',
+            '#8967B3',
+            '#579B78',
+            '#D58A4A',
+            '#C76D83',
+            '#429C9A',
+            '#6976C5',
+            '#D87562',
+        ];
+
+        const colorOptions = colors.map(color => `
+        <label class="avatar-color-option" title="${color}">
+            <input
+                type="radio"
+                name="avatarColor"
+                value="${color}"
+                ${currentColor === color ? 'checked' : ''}
+                required
+            >
+
+            <span
+                class="avatar-color-swatch"
+                style="background-color: ${color}"
+            ></span>
+        </label>
+    `).join('');
+
+        this.open({
+            title: 'Choose Your Avatar Color',
+            description: 'Select a color to personalize your profile and project avatar.',
+
+            fields: `
+            <div class="avatar-color-picker">
+                ${colorOptions}
+            </div>
+        `,
+
+            submitLabel: 'Save Color',
+            onSubmit,
         });
     }
 

@@ -32,6 +32,13 @@ export async function getCurrentUser() {
     return apiRequest('/auth/me');
 }
 
+export async function updateAvatarColor(avatarColor) {
+    return apiRequest('/auth/me/avatar-color', {
+        method: 'PATCH',
+        body: { avatarColor },
+    });
+}
+
 export async function logout() {
     const refreshToken = sessionStorage.getItem('refreshToken');
 

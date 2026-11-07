@@ -73,6 +73,8 @@ export class AppController {
             await this.acceptPendingInvitation();
             await this.loadProjects();
 
+            this.promptForAvatarColor();
+
         } catch (error) {
             console.error('Failed to initialize application:', error);
 
@@ -134,6 +136,32 @@ export class AppController {
         this.appContainer.hidden = false;
     }
 
+    promptForAvatarColor(force = false) {
+        if (!this.user || (this.user.avatarColor && !force)) return;
+
+        this.modal.openAvatarColor(async ({ avatarColor }) => {
+            try {
+                const response = await authService.updateAvatarColor(avatarColor);
+
+                this.user = {
+                    ...this.user,
+                    ...response.user,
+                };
+
+                this.render();
+
+                this.notification.success('Avatar color saved successfully.');
+
+            } catch (error) {
+                console.error('Failed to update avatar color:', error);
+
+                this.notification.error(
+                    error.message || 'Unable to save your avatar color.'
+                );
+            }
+        });
+    }
+
     async login(email, password) {
         try {
             const response = await authService.login(email, password);
@@ -148,6 +176,8 @@ export class AppController {
 
             await this.acceptPendingInvitation();
             await this.loadProjects();
+
+            this.promptForAvatarColor();
 
         } catch (error) {
             console.error('Login failed:', error);
@@ -389,7 +419,7 @@ export class AppController {
 
             window.history.replaceState({}, '', url);
 
-            this.notification.success('Invitation accepted! The share project is now availble.');
+            this.notification.success('Invitation accepted! The shared project is now availble.');
         } catch (error) {
             console.error('Failed to accept invitation:', error);
             this.notification.error(error.message || 'Unable to accept this invitation.');
@@ -559,6 +589,11 @@ export class AppController {
             console.log('Disconnected from Socket.IO:', reason);
         });
 
+        // Avatar events
+        this.socket.on('user:avatar-updated', () => {
+            this.refreshActiveProject();
+        });
+
         // Checklist item events
         this.socket.on('item:created', () => {
             this.refreshActiveProject();
@@ -579,6 +614,12 @@ export class AppController {
 
         this.socket.on('project:deleted', ({ projectId }) => {
             this.handleProjectDeleted(projectId);
+        });
+
+        this.socket.on('project:member-joined', ({ projectId }) => {
+            if (this.activeProject?.id !== projectId) return;
+
+            this.refreshActiveProject();
         });
     }
 
@@ -631,7 +672,6 @@ export class AppController {
             this.user.id,
             {
                 isOwner,
-                getAvatarColor: this.projectView.getAvatarColor.bind(this.projectView),
 
                 onRoleChange: (memberId, role) => {
                     console.log('Change member role:', memberId, role);
