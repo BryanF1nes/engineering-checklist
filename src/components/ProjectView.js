@@ -10,10 +10,10 @@ export class ProjectView {
         this.activeFilter = 'ALL';
     }
 
-    render(project) {
+    render(project, user) {
 
         if (!project) {
-            this.renderEmpty();
+            this.renderEmpty(user);
             return;
         }
 
@@ -291,19 +291,20 @@ export class ProjectView {
         this.bindEvents(project);
     }
 
-    renderEmpty() {
+    renderEmpty(user) {
+        const firstName = user?.firstName
+            ? ` ${this.escapeHTML(user.firstName)}`
+            : '';
 
         this.container.innerHTML = `
-    < div class="empty-state" >
+        <div class="empty-state">
+            <h4>Welcome to your workspace${firstName}</h4>
 
-                <h4>Welcome to your workspace</h4>
-
-                <p>
-                    Select a project from the sidebar
-                    or create a new project to get started.
-                </p>
-
-            </div >
+            <p>
+                Select a project from the sidebar
+                or create a new project to get started.
+            </p>
+        </div>
     `;
     }
 

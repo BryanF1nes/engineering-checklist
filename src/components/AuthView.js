@@ -61,30 +61,33 @@ export class AuthView {
         ];
 
         this.container.innerHTML = `
-        <div class="auth-card">
+        <div class="auth-card register-card">
             <h2>Create Account</h2>
             <p>Register to start managing your projects.</p>
 
             <form id="registerForm">
-                <div class="form-group">
-                    <label for="registerFirstName">First Name</label>
-                    <input
-                        type="text"
-                        id="registerFirstName"
-                        name="firstName"
-                        autocomplete="given-name"
-                        required
-                    >
-                </div>
 
-                <div class="form-group">
-                    <label for="registerLastName">Last Name</label>
-                    <input
-                        type="text"
-                        id="registerLastName"
-                        name="lastName"
-                        autocomplete="family-name"
-                    >
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="registerFirstName">First Name</label>
+                        <input
+                            type="text"
+                            id="registerFirstName"
+                            name="firstName"
+                            autocomplete="given-name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="registerLastName">Last Name</label>
+                        <input
+                            type="text"
+                            id="registerLastName"
+                            name="lastName"
+                            autocomplete="family-name"
+                        >
+                    </div>
                 </div>
 
                 <div class="form-group">

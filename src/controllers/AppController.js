@@ -264,7 +264,7 @@ export class AppController {
             this.user
         );
 
-        this.projectView.render(this.activeProject);
+        this.projectView.render(this.activeProject, this.user);
     }
 
     // PROJECT OPERATIONS
