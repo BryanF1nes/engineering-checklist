@@ -49,56 +49,114 @@ export class AuthView {
     }
 
     renderRegister() {
+        const avatarColors = [
+            '#4A80C5',
+            '#8967B3',
+            '#579B78',
+            '#D58A4A',
+            '#C76D83',
+            '#429C9A',
+            '#6976C5',
+            '#D87562',
+        ];
+
         this.container.innerHTML = `
-            <div class="auth-card">
-                <h2>Create Account</h2>
-                <p>Register to start managing your projects.</p>
+        <div class="auth-card">
+            <h2>Create Account</h2>
+            <p>Register to start managing your projects.</p>
 
-                <form id="registerForm">
-                    <div class="form-group">
-                        <label for="registerName">Name</label>
-                        <input
-                            type="text"
-                            id="registerName"
-                            name="name"
-                            required
-                        >
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerFirstName">First Name</label>
+                    <input
+                        type="text"
+                        id="registerFirstName"
+                        name="firstName"
+                        autocomplete="given-name"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="registerLastName">Last Name</label>
+                    <input
+                        type="text"
+                        id="registerLastName"
+                        name="lastName"
+                        autocomplete="family-name"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input
+                        type="email"
+                        id="registerEmail"
+                        name="email"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input
+                        type="password"
+                        id="registerPassword"
+                        name="password"
+                        minlength="8"
+                        autocomplete="new-password"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        minlength="8"
+                        autocomplete="new-password"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Avatar Color</label>
+
+                    <div class="avatar-color-picker">
+                        ${avatarColors.map((color, index) => `
+                            <label class="avatar-color-option">
+                                <input
+                                    type="radio"
+                                    name="avatarColor"
+                                    value="${color}"
+                                    ${index === 0 ? 'checked' : ''}
+                                    required
+                                >
+                                <span
+                                    class="avatar-color-swatch"
+                                    style="--avatar-color: ${color}"
+                                ></span>
+                            </label>
+                        `).join('')}
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="registerEmail">Email</label>
-                        <input
-                            type="email"
-                            id="registerEmail"
-                            name="email"
-                            required
-                        >
-                    </div>
+                <button type="submit" class="primary-button">
+                    Create Account
+                </button>
+            </form>
 
-                    <div class="form-group">
-                        <label for="registerPassword">Password</label>
-                        <input
-                            type="password"
-                            id="registerPassword"
-                            name="password"
-                            minlength="8"
-                            required
-                        >
-                    </div>
-
-                    <button type="submit" class="primary-button">
-                        Create Account
-                    </button>
-                </form>
-
-                <p class="auth-switch">
-                    Already have an account?
-                    <button type="button" id="showLogin">
-                        Sign In
-                    </button>
-                </p>
-            </div>
-        `;
+            <p class="auth-switch">
+                Already have an account?
+                <button type="button" id="showLogin">
+                    Sign In
+                </button>
+            </p>
+        </div>
+    `;
 
         this.bindRegisterEvents();
     }
@@ -129,10 +187,22 @@ export class AuthView {
 
                 const formData = new FormData(event.currentTarget);
 
+                const password = formData.get('password');
+                const confirmPassword = formData.get('confirmPassword');
+
+                if (password !== confirmPassword) {
+                    this.appController.notification.error(
+                        'Passwords do not match.'
+                    );
+                    return;
+                }
+
                 this.appController.register(
-                    formData.get('name'),
+                    formData.get('firstName'),
+                    formData.get('lastName'),
                     formData.get('email'),
-                    formData.get('password')
+                    password,
+                    formData.get('avatarColor')
                 );
             });
 
@@ -142,4 +212,3 @@ export class AuthView {
             });
     }
 }
-

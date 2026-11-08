@@ -1,12 +1,14 @@
 import { apiRequest, setTokens, clearTokens } from './api.js';
 
-export async function register(name, email, password) {
+export async function register(firstName, lastName, email, password, avatarColor) {
     return apiRequest('/auth/register', {
         method: 'POST',
         body: {
-            name,
+            firstName,
+            lastName,
             email,
             password,
+            avatarColor,
         },
     });
 }

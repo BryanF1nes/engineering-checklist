@@ -170,8 +170,13 @@ export class AppController {
             this.connectSocket();
             this.showApplication();
 
+            const displayName = [
+                this.user.firstName,
+                this.user.lastName
+            ].filter(Boolean).join(' ');
+
             this.notification.success(
-                `Welcome back, ${this.user.name}!`
+                `Welcome back, ${displayName}!`
             )
 
             await this.acceptPendingInvitation();
@@ -188,9 +193,9 @@ export class AppController {
         }
     }
 
-    async register(name, email, password) {
+    async register(firstName, lastName, email, password, avatarColor) {
         try {
-            await authService.register(name, email, password);
+            await authService.register(firstName, lastName, email, password, avatarColor);
 
             // Registration does not automatically create a session,
             // so log the user in after successfully registering.

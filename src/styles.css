@@ -1149,6 +1149,45 @@ body.light .form-group input[type="date"] {
     text-decoration: underline;
 }
 
+.avatar-color-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.avatar-color-option {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-color-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.avatar-color-swatch {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--avatar-color);
+    border: 3px solid transparent;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    transition: outline-color 0.15s ease;
+}
+
+.avatar-color-option input:checked+.avatar-color-swatch {
+    outline-color: var(--avatar-color);
+}
+
+.avatar-color-option input:focus-visible+.avatar-color-swatch {
+    outline-color: var(--text-color);
+}
+
 /* ========================================
    Loading State
 ======================================== */

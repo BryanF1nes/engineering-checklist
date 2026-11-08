@@ -408,7 +408,7 @@ export class ModalController {
             const isProjectOwner = member.role === 'OWNER';
             const isCurrentUser = member.user.id === currentUserId;
 
-            const initial = member.user.name
+            const initial = member.user.firstName
                 .charAt(0)
                 .toUpperCase();
 
@@ -423,7 +423,7 @@ export class ModalController {
                     </div>
 
                     <div class="member-details">
-                        <p>${this.escapeHTML(member.user.name)}</p>
+                        <p>${this.escapeHTML([member.user.firstName, member.user.lastName].filter(Boolean).join(' '))}</p>
                         ${isCurrentUser ? '<span>You</span>' : ''}
                     </div>
                 </div>
@@ -436,7 +436,7 @@ export class ModalController {
                                     <select
                                         class="member-role-select"
                                         data-member-id="${member.user.id}"
-                                        aria-label="Change role for ${this.escapeHTML(member.user.name)}"
+                                        aria-label="Change role for ${this.escapeHTML([member.user.firstName, member.user.lastName].filter(Boolean).join(' '))}"
                                     >
                                         <option
                                             value="CONTRIBUTOR"
