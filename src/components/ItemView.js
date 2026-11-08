@@ -3,11 +3,13 @@ import { formatDuration } from '../utils/formatDuration.js';
 export class ItemView {
 
     static render(item) {
-        const completedByName = item.completedBy?.name;
+        const firstName = item.completedBy?.firstName.charAt(0).toUpperCase() + item.completedBy?.firstName.slice(1);
+        const lastName = item.completedBy?.lastName.charAt(0).toUpperCase() + '.';
+        const completedByName = `${firstName} ${lastName}`;
 
         const completed = item.status === 'COMPLETED';
         const status = item.status === 'COMPLETED'
-            ? `${completedByName.charAt(0).toUpperCase() + completedByName.slice(1)} marked as completed`
+            ? `${completedByName} marked as completed`
             : 'On going';
 
         let formattedDate = "No due date";
