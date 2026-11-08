@@ -1613,12 +1613,19 @@ body.dark .retry-button:hover {
 }
 
 @media (max-width: 600px) {
+    body {
+        height: auto;
+        min-height: 100dvh;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
     .sidebar-resizer {
         display: none;
     }
 
     .app-container {
-        flex: 1 0 auto;
+        flex: 0 0 auto;
         grid-template-columns: 1fr;
         min-height: auto;
     }
@@ -1711,15 +1718,15 @@ body.dark .retry-button:hover {
     .register-card .form-row {
         grid-template-columns: 1fr;
     }
-    
+
     .register-card {
         padding: 1.25rem;
     }
-    
+
     .auth-card {
         padding: 1.25rem;
     }
-    
+
     .modal-footer {
         flex-direction: column-reverse;
     }
@@ -1729,7 +1736,7 @@ body.dark .retry-button:hover {
     }
 }
 
-@media (max-height: 700px) {
+@media (max-height: 700px) and (min-width: 601px) {
     .main-content {
         overflow-y: auto;
     }
@@ -1768,4 +1775,3 @@ body.dark .retry-button:hover {
         border-color var(--transition),
         color var(--transition);
 }
-
