@@ -1,4 +1,5 @@
 import { ItemView } from './ItemView.js';
+import { escapeHTML } from '../utils/html.js';
 
 export class ProjectView {
 
@@ -78,7 +79,7 @@ export class ProjectView {
                 <div>
                     <p class="section-label">PROJECT OVERVIEW</p>
 
-                    <h3>${this.escapeHTML(project.name)}</h3>
+                    <h3>${escapeHTML(project.name)}</h3>
 
                     <p class="project-description">
                         Created ${new Date(project.createdAt).toLocaleDateString()}
@@ -91,9 +92,9 @@ export class ProjectView {
                             <div
                                 class="member-avatar"
                                 style="background-color: ${member.user.avatarColor || '#808080'}"
-                                title="${this.escapeHTML([member.user.firstName, member.user.lastName].filter(Boolean).join(' '))} (${member.role})"
+                                title="${escapeHTML([member.user.firstName, member.user.lastName].filter(Boolean).join(' '))} (${member.role})"
                             >
-                                ${this.escapeHTML(member.user.firstName.charAt(0).toUpperCase())}
+                                ${escapeHTML(member.user.firstName.charAt(0).toUpperCase())}
                             </div>
                         `).join('')
             }
@@ -196,12 +197,12 @@ export class ProjectView {
 
                 <div class="detail-card">
                     <span class="detail-label">STATUS</span>
-                    <h6>${this.escapeHTML(status)}</h6>
+                    <h6>${escapeHTML(status)}</h6>
                 </div>
 
                 <div class="detail-card">
                     <span class="detail-label">PROJECT STAGE</span>
-                    <h6>${this.escapeHTML(stage)}</h6>
+                    <h6>${escapeHTML(stage)}</h6>
                 </div>
 
                 <div class="detail-card">
@@ -293,7 +294,7 @@ export class ProjectView {
 
     renderEmpty(user) {
         const firstName = user?.firstName
-            ? ` ${this.escapeHTML(user.firstName)}`
+            ? ` ${escapeHTML(user.firstName)}`
             : '';
 
         this.container.innerHTML = `
@@ -365,14 +366,5 @@ export class ProjectView {
                     });
 
             });
-    }
-
-    escapeHTML(value) {
-        return String(value)
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
-            .replaceAll("'", '&#039;');
     }
 }

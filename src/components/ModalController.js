@@ -1,3 +1,5 @@
+import { escapeHTML } from "../utils/html.js";
+
 export class ModalController {
 
     constructor(container) {
@@ -55,7 +57,7 @@ export class ModalController {
                         type="text"
                         id="projectName"
                         name="name"
-                        value="${this.escapeHTML(project?.name || '')}"
+                        value="${escapeHTML(project?.name || '')}"
                         placeholder="Enter project name..."
                         required
                         maxlength="100"
@@ -70,7 +72,7 @@ export class ModalController {
                         type="text"
                         id="projectCode"
                         name="code"
-                        value="${this.escapeHTML(project?.projectCode || '')}"
+                        value="${escapeHTML(project?.projectCode || '')}"
                         placeholder="Enter project code..."
                         maxlength="10"
                         autofocus
@@ -122,7 +124,7 @@ export class ModalController {
                         type="text"
                         id="itemName"
                         name="name"
-                        value="${this.escapeHTML(item?.title || '')}"
+                        value="${escapeHTML(item?.title || '')}"
                         placeholder="Enter task name..."
                         required
                         maxlength="150"
@@ -184,7 +186,7 @@ export class ModalController {
         this.open({
             title: 'Share Project',
 
-            description: `Invite someone to collaborate on ${this.escapeHTML(project.name)}.`,
+            description: `Invite someone to collaborate on ${escapeHTML(project.name)}.`,
 
             fields: `
             <div class="form-group">
@@ -202,7 +204,7 @@ export class ModalController {
     }
 
     showInvitation(invitation) {
-        const url = this.escapeHTML(invitation.url);
+        const url = escapeHTML(invitation.url);
 
         const expiresAt = new Date(
             invitation.expiresAt
@@ -419,11 +421,11 @@ export class ModalController {
                         class="member-avatar"
                         style="background-color: ${member.user.avatarColor || '#808080'}"
                     >
-                        ${this.escapeHTML(initial)}
+                        ${escapeHTML(initial)}
                     </div>
 
                     <div class="member-details">
-                        <p>${this.escapeHTML([member.user.firstName, member.user.lastName].filter(Boolean).join(' '))}</p>
+                        <p>${escapeHTML([member.user.firstName, member.user.lastName].filter(Boolean).join(' '))}</p>
                         ${isCurrentUser ? '<span>You</span>' : ''}
                     </div>
                 </div>
@@ -436,7 +438,7 @@ export class ModalController {
                                     <select
                                         class="member-role-select"
                                         data-member-id="${member.user.id}"
-                                        aria-label="Change role for ${this.escapeHTML([member.user.firstName, member.user.lastName].filter(Boolean).join(' '))}"
+                                        aria-label="Change role for ${escapeHTML([member.user.firstName, member.user.lastName].filter(Boolean).join(' '))}"
                                     >
                                         <option
                                             value="CONTRIBUTOR"
@@ -460,7 +462,7 @@ export class ModalController {
                                         Remove
                                     </button>
                                 `
-                        : `<span class="member-role">${this.escapeHTML(member.role)}</span>`
+                        : `<span class="member-role">${escapeHTML(member.role)}</span>`
                 }
                 </div>
             </div>
@@ -557,15 +559,6 @@ export class ModalController {
             submitLabel: 'Save Color',
             onSubmit,
         });
-    }
-
-    escapeHTML(value) {
-        return String(value)
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
-            .replaceAll("'", '&#039;');
     }
 
     onKeyDown(event) {
